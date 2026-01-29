@@ -1,0 +1,348 @@
+<!-- Section Vidéo Hero -->
+<section class="video-hero">
+  <video #heroVideo muted loop playsinline preload="auto">
+    <source src="assets/video-hopital.mp4" type="video/mp4">
+    Votre navigateur ne supporte pas la vidéo.
+  </video>
+
+  <div class="video-overlay">
+    <h1 [class.slide-in]="titleAnimating">
+      {{ currentTitle }}
+    </h1>
+    <p [class.slide-in-delayed]="subtitleAnimating">
+      {{ currentSubtitle }}
+    </p>
+    <button class="cta-button" [class.fade-in-button]="buttonAnimating">
+      Consulter
+    </button>
+  </div>
+</section>
+
+<!-- Section Nos Services (EN DEHORS de video-hero) -->
+<section class="services-section">
+  <h2 class="services-title">Nos Services</h2>
+  
+  <div class="services-container">
+    <!-- Service 1 -->
+    <div class="service-card">
+      <div class="service-icon">
+        <img src="assets/consultation.png" alt="Consultation en ligne">
+      </div>
+      <h3 class="service-name">Téléconsultation</h3>
+      <p class="service-description">Consultez un médecin certifié par vidéo, où que vous soyez.</p>
+    </div>
+
+    <!-- Service 2 -->
+    <div class="service-card">
+      <div class="service-icon">
+        <img src="assets/chatbot.png" alt="Assistant Médical IA">
+      </div>
+      <h3 class="service-name">Assistant Médical IA</h3>
+      <p class="service-description">Réponses médicales instantanées disponibles 24h/24.</p>
+    </div>
+
+    <!-- Service 3 -->
+    <div class="service-card">
+      <div class="service-icon">
+        <img src="assets/rendez-vous.png" alt="Prise de Rendez-vous">
+      </div>
+      <h3 class="service-name">Prise de RDV</h3>
+      <p class="service-description">Réservez votre consultation en quelques clics.</p>
+    </div>
+
+    <!-- Service 4 -->
+    <div class="service-card">
+      <div class="service-icon">
+        <img src="assets/dossier.png" alt="Dossier Médical">
+      </div>
+      <h3 class="service-name">Dossier Médical</h3>
+      <p class="service-description">Accédez à votre historique médical en toute sécurité.</p>
+    </div>
+  </div>
+</section>
+<!-- Section Comment ça marche -->
+<section class="how-it-works-section">
+  <h2 class="how-it-works-title">Comment ça marche ?</h2>
+  
+  <div class="steps-container">
+    <!-- Étape 1 -->
+    <div class="step-item">
+      <div class="step-number">
+        <span>1</span>
+      </div>
+      
+      <h3 class="step-name">Inscription</h3>
+    </div>
+
+    <!-- Flèche 1 -->
+    <div class="arrow">
+      <img src="assets/arrow.png" alt="→">
+    </div>
+
+    <!-- Étape 2 -->
+    <div class="step-item">
+      <div class="step-number">
+        <span>2</span>
+      </div>
+      
+      <h3 class="step-name">Connexion</h3>
+    </div>
+
+    <!-- Flèche 2 -->
+    <div class="arrow">
+      <img src="assets/arrow.png" alt="→">
+    </div>
+
+    <!-- Étape 3 -->
+    <div class="step-item">
+      <div class="step-icon specialty">
+        <img src="assets/cardiologie.png" alt="Cardiologie">
+      </div>
+      <h3 class="step-name">Cardiologie</h3>
+    </div>
+
+    <!-- Étape 4 -->
+    <div class="step-item">
+      <div class="step-icon specialty">
+        <img src="assets/pediatrie.png" alt="Pédiatrie">
+      </div>
+      <h3 class="step-name">Pédiatrie</h3>
+    </div>
+
+    <!-- Étape 5 -->
+    <div class="step-item">
+      <div class="step-icon specialty">
+        <img src="assets/gynecologie.png" alt="Gynécologie">
+      </div>
+      <h3 class="step-name">Gynécologie</h3>
+    </div>
+
+    <!-- Étape 6 -->
+    <div class="step-item">
+      <div class="step-icon specialty">
+        <img src="assets/medecine.png" alt="Médecine">
+      </div>
+      <h3 class="step-name">Rhumatologie</h3>
+    </div>
+
+    <!-- Étape 7 -->
+    <div class="step-item">
+      <div class="step-icon specialty">
+        <img src="assets/gastro.png" alt="Ostéopathie">
+      </div>
+      <h3 class="step-name">gastro entérologue</h3>
+    </div>
+
+    <!-- Étape 8 -->
+    <div class="step-item">
+      <div class="step-icon specialty">
+        <img src="assets/rein.png" alt="Dermatologie">
+      </div>
+      <h3 class="step-name">Néphrologue</h3>
+    </div>
+ 
+    <!-- Étape 8 -->
+    <div class="step-item">
+      <div class="step-icon specialty">
+        <img src="assets/c.png" alt="Dermatologie">
+      </div>
+      <h3 class="step-name">Autre</h3>
+    </div>
+
+
+  </div>
+</section>
+<!-- Section Conseils Médicaux -->
+<section class="medical-advice-section">
+  <h2 class="section-title">Découvrez nos conseils santé par spécialité</h2>
+  
+  <!-- Ligne d'icônes décoratives (optionnel) -->
+  <div class="specialty-icons-row">
+    <div class="icon-circle" style="background: linear-gradient(135deg, #FF6B6B, #FF8E8E);">
+      <img src="assets/cardio.png" alt="Cardiologie">
+    </div>
+    <div class="icon-circle" style="background: linear-gradient(135deg, #FFA726, #FFB74D);">
+      <img src="assets/pediatre.png" alt="Pédiatrie">
+    </div>
+    <div class="icon-circle" style="background: linear-gradient(135deg, #FFCA28, #FFD54F);">
+      <img src="assets/dermato.png" alt="Dermatologie">
+    </div>
+    <div class="icon-circle" style="background: linear-gradient(135deg, #EC407A, #F06292);">
+      <img src="assets/gyneco.png" alt="Gynécologie">
+    </div>
+    <div class="icon-circle" style="background: linear-gradient(135deg, #42A5F5, #64B5F6);">
+      <img src="assets/ophtalmo.png" alt="Ophtalmologie">
+    </div>
+    <div class="icon-circle" style="background: linear-gradient(135deg, #66BB6A, #81C784);">
+      <img src="assets/med.png" alt="Médecine générale">
+    </div>
+  </div>
+
+  <div class="specialties-grid">
+    <!-- Ligne 1 : 4 spécialités -->
+    <div class="specialty-card" (click)="openModal('medecine-generale')">
+      <div class="specialty-left" style="background: linear-gradient(135deg, #66BB6A, #81C784);">
+        <img src="assets/med.png" alt="Médecine générale">
+      </div>
+      <div class="specialty-right">
+        <h3 class="specialty-name">Médecine générale</h3>
+        <button class="advice-btn">Lire l'article</button>
+      </div>
+    </div>
+
+    <div class="specialty-card" (click)="openModal('cardiologie')">
+      <div class="specialty-left" style="background: linear-gradient(135deg, #FF6B6B, #FF8E8E);">
+        <img src="assets/cardio.png" alt="Cardiologie">
+      </div>
+      <div class="specialty-right">
+        <h3 class="specialty-name">Cardiologie</h3>
+        <button class="advice-btn">Lire l'article</button>
+      </div>
+    </div>
+
+    <div class="specialty-card" (click)="openModal('dermatologie')">
+      <div class="specialty-left" style="background: linear-gradient(135deg, #FFCA28, #FFD54F);">
+        <img src="assets/dermato.png" alt="Dermatologie">
+      </div>
+      <div class="specialty-right">
+        <h3 class="specialty-name">Dermatologie</h3>
+        <button class="advice-btn">Lire l'article</button>
+      </div>
+    </div>
+
+    <div class="specialty-card" (click)="openModal('pediatrie')">
+      <div class="specialty-left" style="background: linear-gradient(135deg, #FFA726, #FFB74D);">
+        <img src="assets/pediatre.png" alt="Pédiatrie">
+      </div>
+      <div class="specialty-right">
+        <h3 class="specialty-name">Pédiatrie</h3>
+        <button class="advice-btn">Lire l'article</button>
+      </div>
+    </div>
+
+    <!-- Ligne 2 : 4 spécialités -->
+    <div class="specialty-card" (click)="openModal('gynecologie')">
+      <div class="specialty-left" style="background: linear-gradient(135deg, #EC407A, #F06292);">
+        <img src="assets/gyneco.png" alt="Gynécologie">
+      </div>
+      <div class="specialty-right">
+        <h3 class="specialty-name">Gynécologie / Obstétrique</h3>
+        <button class="advice-btn">Lire l'article</button>
+      </div>
+    </div>
+
+    <div class="specialty-card" (click)="openModal('orthopedie')">
+      <div class="specialty-left" style="background: linear-gradient(135deg, #8D6E63, #A1887F);">
+        <img src="assets/ortho.png" alt="Orthopédie">
+      </div>
+      <div class="specialty-right">
+        <h3 class="specialty-name">Orthopédie</h3>
+        <button class="advice-btn">Lire l'article</button>
+      </div>
+    </div>
+
+    <div class="specialty-card" (click)="openModal('neurologie')">
+      <div class="specialty-left" style="background: linear-gradient(135deg, #7E57C2, #9575CD);">
+        <img src="assets/neuro.png" alt="Neurologie">
+      </div>
+      <div class="specialty-right">
+        <h3 class="specialty-name">Neurologie</h3>
+        <button class="advice-btn">Lire l'article</button>
+      </div>
+    </div>
+
+    <div class="specialty-card" (click)="openModal('orl')">
+      <div class="specialty-left" style="background: linear-gradient(135deg, #26C6DA, #4DD0E1);">
+        <img src="assets/orl.png" alt="ORL">
+      </div>
+      <div class="specialty-right">
+        <h3 class="specialty-name">ORL</h3>
+        <button class="advice-btn">Lire l'article</button>
+      </div>
+    </div>
+
+    <!-- Ligne 3 : 4 spécialités -->
+    <div class="specialty-card" (click)="openModal('ophtalmologie')">
+      <div class="specialty-left" style="background: linear-gradient(135deg, #42A5F5, #64B5F6);">
+        <img src="assets/ophtalmo.png" alt="Ophtalmologie">
+      </div>
+      <div class="specialty-right">
+        <h3 class="specialty-name">Ophtalmologie</h3>
+        <button class="advice-btn">Lire l'article</button>
+      </div>
+    </div>
+
+    <div class="specialty-card" (click)="openModal('endocrinologie')">
+      <div class="specialty-left" style="background: linear-gradient(135deg, #AB47BC, #BA68C8);">
+        <img src="assets/endocrino.png" alt="Endocrinologie">
+      </div>
+      <div class="specialty-right">
+        <h3 class="specialty-name">Endocrinologie</h3>
+        <button class="advice-btn">Lire l'article</button>
+      </div>
+    </div>
+
+    <div class="specialty-card" (click)="openModal('gastro')">
+      <div class="specialty-left" style="background: linear-gradient(135deg, #26A69A, #4DB6AC);">
+        <img src="assets/gastroo.png" alt="Gastro-entérologie">
+      </div>
+      <div class="specialty-right">
+        <h3 class="specialty-name">Gastro-entérologie</h3>
+        <button class="advice-btn">Lire l'article</button>
+      </div>
+    </div>
+
+    <div class="specialty-card" (click)="openModal('psychiatrie')">
+      <div class="specialty-left" style="background: linear-gradient(135deg, #5C6BC0, #7986CB);">
+        <img src="assets/psy.png" alt="Psychiatrie">
+      </div>
+      <div class="specialty-right">
+        <h3 class="specialty-name">Psychiatrie</h3>
+        <button class="advice-btn">Lire l'article</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Modal pour afficher les conseils -->
+<div class="modal-overlay" *ngIf="isModalOpen" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <button class="modal-close" (click)="closeModal()">
+      <span>&times;</span>
+    </button>
+    
+    <div class="modal-header" [style.background]="currentSpecialty.color">
+      <img [src]="currentSpecialty.icon" [alt]="currentSpecialty.name">
+      <h2>{{ currentSpecialty.name }}</h2>
+    </div>
+    
+    <div class="modal-body">
+      <h3>10 Conseils Essentiels</h3>
+      <ul class="advice-list">
+        <li *ngFor="let conseil of currentSpecialty.conseils; let i = index" 
+            [style.animation-delay]="(i * 0.05) + 's'">
+          <span class="advice-number">{{ i + 1 }}</span>
+          <span class="advice-text">{{ conseil }}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<section class="stats-section">
+  <div class="stats-container">
+    <div class="stat-card" *ngFor="let stat of stats">
+
+      <img
+        class="stat-icon"
+        [src]="stat.icon"
+        [alt]="stat.label"
+      />
+
+      <h3 class="stat-number">
+        {{ stat.current }}{{ stat.suffix || '' }}
+      </h3>
+
+      <p class="stat-label">{{ stat.label }}</p>
+    </div>
+  </div>
+</section>

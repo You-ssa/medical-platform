@@ -1,0 +1,112 @@
+/* ===== Navbar ===== */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff; /* fond blanc propre */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 0 40px; /* marge horizontale */
+  position: fixed; /* navbar fixe en haut */
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  height: 100px;   /* hauteur de la navbar */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.navbar .logo img {
+  height: 80px; /* taille du logo */
+  max-height: 100px;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 30px; /* espacement entre liens */
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  margin-left: 20px; /* décale un peu les liens à gauche */
+}
+
+.nav-links li a {
+  color: #1b0d91;       /* couleur bleu */
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 20px;      /* plus grand */
+  position: relative;
+  padding: 6px 0;
+  transition: color 0.3s;
+  display: flex;
+  align-items: center;   /* aligne verticalement */
+  height: 100%;          /* prend toute la hauteur de la navbar */
+  line-height: normal;
+}
+
+/* Ligne bleue sous le lien au survol */
+.nav-links li a::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 2px;
+  left: 0;
+  bottom: 0;
+  background-color:  #1b0d91;
+  transition: width 0.3s ease-in-out;
+}
+
+.nav-links li a:hover {
+  color: #1b0d91;
+  transform: scale(1.1);
+}
+
+.nav-links li a:hover::after {
+  width: 100%;
+}
+
+/* ===== Lien URGENCE ===== */
+.urgence-link {
+  color: rgb(207, 30, 30) !important;      /* force le rouge */
+  font-weight: bold;          
+  display: flex;              /* pour aligner texte et GIF sur la même ligne */
+  align-items: center;        /* aligne verticalement avec les autres liens */
+  gap: 5px;                   
+  text-decoration: none;
+  font-size: 20px;            /* même taille que les autres liens */
+  height: 100%;
+  line-height: normal;
+}
+
+/* Animation au survol du GIF */
+.urgence-gif {
+  width: 30px;                
+  height: 30px;
+  transition: transform 0.3s;
+}
+
+.urgence-link:hover .urgence-gif {
+  transform: scale(1.2); /* zoom GIF */
+}
+
+/* ===== Contenu principal ===== */
+.main-content {
+  padding: 140px 20px 60px 20px; /* laisse de la place sous la navbar fixe */
+  text-align: center;
+  color: #0072C6;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+}
+
+.main-content h1 {
+  font-size: 2.6rem; 
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.main-content p {
+  font-size: 1.3rem;
+  max-width: 700px;
+  margin: 0 auto;
+  color: #333333;
+}
