@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Firestore, collection, addDoc, query, where, getDocs, doc, updateDoc, deleteDoc } from '@angular/fire/firestore';
-import { Storage, ref, uploadBytes, getDownloadURL } from '@angular/fire/storage';
 
 export interface User {
   id?: string;
@@ -11,7 +10,7 @@ export interface User {
   motDePasse: string;
   userType: 'patient' | 'medecin' | 'secretaire' | 'admin';
   dateInscription: string;
-  photoUrl?: string;
+  photoBase64?: string; // Stockage direct en binaire (Base64)
   
   // Champs spécifiques patient
   sexe?: string;
@@ -33,21 +32,27 @@ export interface User {
   providedIn: 'root'
 })
 export class UserService {
-  constructor(
-    private firestore: Firestore,
-    private storage: Storage
-  ) {}
+  constructor(private firestore: Firestore) {}
 
   /**
-   * Créer un patient (avec photo optionnelle)
+   * Convertir un fichier en Base64
+   */
+  private fileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+    });
+  }
+
+  /**
+   * Créer un patient (avec photo optionnelle en Base64)
    */
   async createPatient(user: User, photoFile?: File): Promise<void> {
     try {
-      // Upload photo si fournie
       if (photoFile) {
-        const fileRef = ref(this.storage, `patients/${Date.now()}_${photoFile.name}`);
-        await uploadBytes(fileRef, photoFile);
-        user.photoUrl = await getDownloadURL(fileRef);
+        user.photoBase64 = await this.fileToBase64(photoFile);
       }
 
       user.userType = 'patient';
@@ -61,15 +66,12 @@ export class UserService {
   }
 
   /**
-   * Créer un médecin (en attente d'approbation admin)
+   * Créer un médecin
    */
   async createMedecin(user: User, photoFile?: File): Promise<void> {
     try {
-      // Upload photo si fournie
       if (photoFile) {
-        const fileRef = ref(this.storage, `medecins/${Date.now()}_${photoFile.name}`);
-        await uploadBytes(fileRef, photoFile);
-        user.photoUrl = await getDownloadURL(fileRef);
+        user.photoBase64 = await this.fileToBase64(photoFile);
       }
 
       user.userType = 'medecin';
@@ -85,15 +87,12 @@ export class UserService {
   }
 
   /**
-   * Créer un secrétaire (avec photo optionnelle)
+   * Créer un secrétaire
    */
   async createSecretaire(user: User, photoFile?: File): Promise<void> {
     try {
-      // Upload photo si fournie
       if (photoFile) {
-        const fileRef = ref(this.storage, `secretaires/${Date.now()}_${photoFile.name}`);
-        await uploadBytes(fileRef, photoFile);
-        user.photoUrl = await getDownloadURL(fileRef);
+        user.photoBase64 = await this.fileToBase64(photoFile);
       }
 
       user.userType = 'secretaire';
@@ -109,13 +108,12 @@ export class UserService {
   }
 
   /**
-   * Créer un admin (réservé aux admins existants)
+   * Créer un admin
    */
   async createAdmin(user: User): Promise<void> {
     try {
       user.userType = 'admin';
       user.dateInscription = new Date().toISOString();
-      
       await addDoc(collection(this.firestore, 'admins'), user);
       console.log('✅ Admin créé avec succès');
     } catch (error) {
@@ -123,6 +121,9 @@ export class UserService {
       throw error;
     }
   }
+
+  // ... (le reste de UserService reste inchangé)
+
 
   /**
    * Connexion utilisateur

@@ -46,7 +46,7 @@
       <div class="users-grid">
         <div *ngFor="let medecin of medecinsEnAttente" class="user-card">
           <div class="user-photo">
-            <img [src]="medecin.photoUrl || 'assets/default-avatar.png'" alt="Photo">
+<img [src]="medecin.photoBase64 || 'assets/default-avatar.png'" alt="Photo">
           </div>
           <div class="user-info">
             <h3>{{ medecin.prenom }} {{ medecin.nom }}</h3>
@@ -81,7 +81,7 @@
       <div class="users-grid">
         <div *ngFor="let secretaire of secretairesEnAttente" class="user-card">
           <div class="user-photo">
-            <img [src]="secretaire.photoUrl || 'assets/default-avatar.png'" alt="Photo">
+<img [src]="secretaire.photoBase64 || 'assets/default-avatar.png'" alt="Photo">
           </div>
           <div class="user-info">
             <h3>{{ secretaire.prenom }} {{ secretaire.nom }}</h3>
