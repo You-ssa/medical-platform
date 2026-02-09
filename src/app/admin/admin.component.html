@@ -1,10 +1,19 @@
 <div class="admin-container">
   <div class="admin-header">
     <h1><i class="fas fa-user-shield"></i> Espace Administrateur</h1>
-    <button class="btn-logout" (click)="logout()">
-      <i class="fas fa-sign-out-alt"></i> Déconnexion
-    </button>
+    <div style="display: flex; gap: 12px;">
+      <!-- 🆕 Bouton pour accéder au nouveau dashboard -->
+      <button class="btn-dashboard" routerLink="/admin/dashboard">
+        <i class="fas fa-tachometer-alt"></i> Dashboard Complet
+      </button>
+      <button class="btn-logout" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i> Déconnexion
+      </button>
+    </div>
   </div>
+  
+  <!-- Reste du template... -->
+
 
   <!-- Navigation onglets -->
   <div class="admin-tabs">

@@ -165,7 +165,7 @@ body {
 }
 
 .tab-btn.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #667eea 0%, #667eea 100%);
   color: white;
   box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
   transform: translateY(-2px);
@@ -242,9 +242,9 @@ form {
 /* ===== Bouton ===== */
 .btn-primary {
   width: 100%;
-  max-width: 400px;
+  max-width: 200px;
   padding: 17px 18px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #667eea 0%, #9998d4bd 100%);
   color: white;
   font-weight: 700;
   border: none;

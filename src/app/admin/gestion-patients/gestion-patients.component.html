@@ -1,0 +1,189 @@
+<div class="dashboard-layout">
+  <app-sidebar></app-sidebar>
+  
+  <div class="main-content">
+    <app-header></app-header>
+    
+    <div class="page-content">
+      <div class="page-header">
+        <div>
+          <h1><i class="fas fa-users"></i> Gestion des Patients</h1>
+          <p class="page-subtitle">Liste complète des patients enregistrés</p>
+        </div>
+      </div>
+
+      <!-- Barre de recherche et filtres -->
+      <div class="toolbar">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            (input)="searchPatients()"
+            placeholder="Rechercher un patient (nom, prénom, email, téléphone)...">
+        </div>
+        
+        <div class="toolbar-actions">
+          <button class="btn-filter">
+            <i class="fas fa-filter"></i> Filtres
+          </button>
+          <button class="btn-export">
+            <i class="fas fa-download"></i> Exporter
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats rapides -->
+      <div class="quick-stats">
+        <div class="quick-stat-card">
+          <i class="fas fa-users"></i>
+          <div>
+            <p class="stat-label">Total Patients</p>
+            <p class="stat-value">{{patients.length}}</p>
+          </div>
+        </div>
+        <div class="quick-stat-card">
+          <i class="fas fa-user-check"></i>
+          <div>
+            <p class="stat-label">Actifs ce mois</p>
+            <p class="stat-value">{{(patients.length * 0.75).toFixed(0)}}</p>
+          </div>
+        </div>
+        <div class="quick-stat-card">
+          <i class="fas fa-user-plus"></i>
+          <div>
+            <p class="stat-label">Nouveaux (30j)</p>
+            <p class="stat-value">{{(patients.length * 0.15).toFixed(0)}}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div *ngIf="loading" class="loading-container">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>Chargement des patients...</p>
+      </div>
+
+      <!-- Table des patients -->
+      <div *ngIf="!loading" class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Photo</th>
+              <th>Nom Complet</th>
+              <th>Email</th>
+              <th>Téléphone</th>
+              <th>Sexe</th>
+              <th>Ville</th>
+              <th>Date d'inscription</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let patient of filteredPatients" class="table-row">
+              <td>
+                <img [src]="patient.photoBase64 || 'assets/default-avatar.png'" 
+                     alt="Photo" 
+                     class="table-photo">
+              </td>
+              <td>
+                <div class="name-cell">
+                  <span class="name">{{patient.prenom}} {{patient.nom}}</span>
+                  <span class="id">ID: {{patient.id?.substring(0, 8)}}</span>
+                </div>
+              </td>
+              <td>{{patient.email}}</td>
+              <td>{{patient.telephone}}</td>
+              <td>
+                <span class="badge badge-info">{{patient.sexe || 'N/A'}}</span>
+              </td>
+              <td>{{patient.ville || 'N/A'}}</td>
+              <td>{{formatDate(patient.dateInscription)}}</td>
+              <td>
+                <div class="action-buttons">
+                  <button class="btn-icon blue" (click)="viewPatient(patient)" title="Voir détails">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <button class="btn-icon green" title="Modifier">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button class="btn-icon orange" title="Dossier médical">
+                    <i class="fas fa-folder-open"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Empty state -->
+        <div *ngIf="filteredPatients.length === 0" class="empty-state">
+          <i class="fas fa-search"></i>
+          <h3>Aucun patient trouvé</h3>
+          <p>Essayez de modifier vos critères de recherche</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Patient Detail -->
+<div class="modal-overlay" *ngIf="selectedPatient" (click)="closePatientDetail()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2><i class="fas fa-user"></i> Détails du Patient</h2>
+      <button class="btn-close" (click)="closePatientDetail()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="patient-detail-grid">
+        <div class="detail-section">
+          <img [src]="selectedPatient.photoBase64 || 'assets/default-avatar.png'" 
+               alt="Photo" 
+               class="detail-photo">
+          <h3>{{selectedPatient.prenom}} {{selectedPatient.nom}}</h3>
+          <p class="patient-id">ID: {{selectedPatient.id}}</p>
+        </div>
+
+        <div class="detail-section">
+          <h4><i class="fas fa-info-circle"></i> Informations Personnelles</h4>
+          <div class="info-grid">
+            <div class="info-item">
+              <label>Email</label>
+              <p>{{selectedPatient.email}}</p>
+            </div>
+            <div class="info-item">
+              <label>Téléphone</label>
+              <p>{{selectedPatient.telephone}}</p>
+            </div>
+            <div class="info-item">
+              <label>Sexe</label>
+              <p>{{selectedPatient.sexe || 'N/A'}}</p>
+            </div>
+            <div class="info-item">
+              <label>Pays</label>
+              <p>{{selectedPatient.pays || 'N/A'}}</p>
+            </div>
+            <div class="info-item">
+              <label>Ville</label>
+              <p>{{selectedPatient.ville || 'N/A'}}</p>
+            </div>
+            <div class="info-item">
+              <label>Date d'inscription</label>
+              <p>{{formatDate(selectedPatient.dateInscription)}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="closePatientDetail()">Fermer</button>
+      <button class="btn-primary">
+        <i class="fas fa-folder-open"></i> Voir Dossier Médical
+      </button>
+    </div>
+  </div>
+</div>

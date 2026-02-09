@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router'; // 🆕 Ajoutez RouterModule
 import { UserService, User } from '../services/user.service';
 import { ProfilDetailComponent } from '../profil-detail/profil-detail.component';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProfilDetailComponent],
+  imports: [CommonModule, FormsModule, RouterModule, ProfilDetailComponent], // 🆕 RouterModule
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.css']
 })

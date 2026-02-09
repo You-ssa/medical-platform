@@ -1,0 +1,214 @@
+<div class="dashboard-layout">
+  <app-sidebar></app-sidebar>
+  
+  <div class="main-content">
+    <app-header></app-header>
+    
+    <div class="dashboard-content">
+      <!-- Statistics Cards -->
+      <div class="stats-grid">
+        <app-card-stat
+          title="Demandes de Connexion"
+          [value]="stats.demandesEnAttente"
+          label="En Attente"
+          icon="fas fa-envelope"
+          cardClass="orange">
+        </app-card-stat>
+
+        <app-card-stat
+          title="Patients Enregistrés"
+          [value]="stats.totalPatients"
+          icon="fas fa-users"
+          cardClass="green">
+        </app-card-stat>
+
+        <app-card-stat
+          title="Médecins"
+          [value]="stats.totalMedecins"
+          icon="fas fa-user-md"
+          cardClass="blue">
+        </app-card-stat>
+
+        <app-card-stat
+          title="Alertes & Notifications"
+          [value]="stats.nouvellesNotifications"
+          label="Nouvelles"
+          icon="fas fa-bell"
+          cardClass="red">
+        </app-card-stat>
+      </div>
+
+      <!-- Main Content Grid -->
+      <div class="content-grid">
+        <!-- Gestion des Patients -->
+        <div class="panel">
+          <div class="panel-header">
+            <h2><i class="fas fa-users"></i> Gestion des Patients</h2>
+          </div>
+          <div class="panel-body">
+            <div class="menu-list">
+              <!-- ✅ Lien fonctionnel -->
+              <a routerLink="/admin/gestion-patients" class="menu-item">
+                <i class="fas fa-list"></i> Liste des Patients
+                <i class="fas fa-chevron-right"></i>
+              </a>
+              
+              <!-- ✅ Lien désactivé - Pas encore implémenté -->
+              <a href="javascript:void(0)" class="menu-item disabled" (click)="comingSoon('Dossiers Médicaux')">
+                <i class="fas fa-folder"></i> Dossiers Médicaux
+                <i class="fas fa-chevron-right"></i>
+              </a>
+              
+              <!-- ✅ Lien désactivé - Pas encore implémenté -->
+              <a href="javascript:void(0)" class="menu-item disabled" (click)="comingSoon('Accès et Droits')">
+                <i class="fas fa-key"></i> Accès et Droits
+                <i class="fas fa-chevron-right"></i>
+              </a>
+            </div>
+
+            <div class="recent-section">
+              <h3><i class="fas fa-users"></i> Patients Récents</h3>
+              
+              <!-- ✅ Loading state -->
+              <div *ngIf="loading" class="loading-small">
+                <i class="fas fa-spinner fa-spin"></i> Chargement...
+              </div>
+              
+              <!-- ✅ Liste des patients -->
+              <div *ngIf="!loading" class="user-list">
+                <div *ngFor="let patient of recentPatients" class="user-item">
+                  <img [src]="patient.photoBase64 || 'assets/default-avatar.png'" alt="Photo" class="user-photo">
+                  <div class="user-details">
+                    <p class="user-name">{{patient.prenom}} {{patient.nom}}</p>
+                    <p class="user-id">Dossier #{{patient.id?.substring(0, 4)}}</p>
+                  </div>
+                  <button class="btn-view-sm" (click)="comingSoon('Dossier Patient')">Voir Dossier</button>
+                </div>
+                
+                <!-- ✅ Message si aucun patient -->
+                <div *ngIf="recentPatients.length === 0" class="empty-message">
+                  <i class="fas fa-inbox"></i>
+                  <p>Aucun patient récent</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gestion des Médecins -->
+        <div class="panel">
+          <div class="panel-header">
+            <h2><i class="fas fa-user-md"></i> Gestion des Médecins</h2>
+          </div>
+          <div class="panel-body">
+            <div class="menu-list">
+              <!-- ✅ Lien fonctionnel -->
+              <a routerLink="/admin/gestion-medecins" class="menu-item">
+                <i class="fas fa-list"></i> Liste des Médecins
+                <i class="fas fa-chevron-right"></i>
+              </a>
+              
+              <!-- ✅ Lien désactivé -->
+              <a href="javascript:void(0)" class="menu-item disabled" (click)="comingSoon('Gérer Spécialités')">
+                <i class="fas fa-user-cog"></i> Gérer Spécialités
+                <i class="fas fa-chevron-right"></i>
+              </a>
+              
+              <!-- ✅ Lien vers la page d'approbation -->
+              <a routerLink="/admin" class="menu-item">
+                <i class="fas fa-user-check"></i> Approuver Médecins
+                <i class="fas fa-chevron-right"></i>
+              </a>
+            </div>
+
+            <!-- ✅ Loading state -->
+            <div *ngIf="loading" class="loading-small">
+              <i class="fas fa-spinner fa-spin"></i> Chargement...
+            </div>
+
+            <!-- ✅ Liste des médecins -->
+            <div *ngIf="!loading" class="medecin-list">
+              <div *ngFor="let medecin of recentMedecins" class="medecin-item">
+                <div class="medecin-info">
+                  <p class="medecin-name">Dr. {{medecin.prenom}} {{medecin.nom}}</p>
+                  <p class="medecin-spec">{{medecin.specialite}}</p>
+                </div>
+                <div class="medecin-actions">
+                  <button class="btn-action-sm green" (click)="comingSoon('Modifier Médecin')">Modifier</button>
+                  <button class="btn-action-sm red" (click)="comingSoon('Supprimer Médecin')">Supprimer</button>
+                </div>
+              </div>
+              
+              <!-- ✅ Message si aucun médecin -->
+              <div *ngIf="recentMedecins.length === 0" class="empty-message">
+                <i class="fas fa-inbox"></i>
+                <p>Aucun médecin approuvé</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Statistiques -->
+        <div class="panel">
+          <div class="panel-header">
+            <h2><i class="fas fa-chart-bar"></i> Statistiques de la Plateforme</h2>
+          </div>
+          <div class="panel-body">
+            <div class="stat-item">
+              <div class="stat-info">
+                <p class="stat-title">Taux d'utilisation du Chatbot</p>
+                <div class="progress-bar">
+                  <div class="progress-fill green" [style.width.%]="stats.tauxUtilisation"></div>
+                </div>
+              </div>
+              <p class="stat-percentage">{{stats.tauxUtilisation}}%</p>
+            </div>
+
+            <div class="stat-item">
+              <div class="stat-info">
+                <p class="stat-title">Consultations Mensuelles</p>
+                <div class="progress-bar">
+                  <div class="progress-fill red" style="width: 75%"></div>
+                </div>
+              </div>
+              <p class="stat-number">{{stats.consultationsMensuelles}}</p>
+            </div>
+
+            <button class="btn-primary full-width" style="margin-top: 20px;" (click)="comingSoon('Logs d\'Audit')">
+              <i class="fas fa-eye"></i> Voir les Logs
+            </button>
+          </div>
+        </div>
+
+        <!-- Notifications Globales -->
+        <div class="panel full-width">
+          <div class="panel-header">
+            <h2><i class="fas fa-bell"></i> Notifications Globales</h2>
+            <div class="header-actions">
+              <button class="btn-secondary" (click)="comingSoon('Envoi Email')">
+                <i class="fas fa-envelope"></i> Envoyer Email
+              </button>
+              <button class="btn-secondary" (click)="comingSoon('Envoi SMS')">
+                <i class="fas fa-sms"></i> Envoyer SMS
+              </button>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="notification-item">
+              <i class="fas fa-tools"></i>
+              <p>Maintenance prévue ce soir</p>
+            </div>
+            <div class="notification-item">
+              <i class="fas fa-shield-alt"></i>
+              <p>Nouveau protocole de sécurité</p>
+            </div>
+            <div class="notification-item">
+              <i class="fas fa-sync"></i>
+              <p>Rappel: Mise à jour des dossiers</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
