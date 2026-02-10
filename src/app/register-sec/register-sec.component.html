@@ -53,6 +53,7 @@
       </div>
 
       <!-- Étape 2 : Email + Téléphone + Numéro identité (optionnel) -->
+            <!-- Étape 2 : Email + Téléphone + Adresse hôpital -->
       <div *ngIf="currentStep === 2" class="step">
         <div class="form-group">
           <label for="email">Email *</label>
@@ -65,9 +66,8 @@
         </div>
 
         <div class="form-group">
-          <label for="rpps">Numéro d'identité (optionnel)</label>
-          <input type="text" id="rpps" [(ngModel)]="rpps" name="rpps" placeholder="Optionnel">
-          <small class="hint">Numéro d'identification professionnelle si applicable</small>
+          <label for="adresseHopital">Adresse hôpital / cabinet *</label>
+          <textarea id="adresseHopital" [(ngModel)]="adresseHopital" name="adresseHopital" rows="3" placeholder="Adresse complète" required></textarea>
         </div>
 
         <div class="step-buttons">
@@ -110,13 +110,8 @@
         </div>
       </div>
 
-      <!-- Étape 4 : Adresse + Mot de passe + Confirmation + Checkbox -->
+            <!-- Étape 4 : Mot de passe + Confirmation + Checkbox -->
       <div *ngIf="currentStep === 4" class="step">
-        <div class="form-group">
-          <label for="adresseHopital">Adresse hôpital / cabinet *</label>
-          <textarea id="adresseHopital" [(ngModel)]="adresseHopital" name="adresseHopital" rows="3" placeholder="Adresse complète" required></textarea>
-        </div>
-
         <div class="form-group">
           <label for="motDePasse">Mot de passe *</label>
           <input type="password" id="motDePasse" [(ngModel)]="motDePasse" name="motDePasse" placeholder="••••••••" required>

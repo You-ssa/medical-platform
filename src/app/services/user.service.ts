@@ -21,10 +21,11 @@ export interface User {
   // Champs spécifiques aux patients
   pays?: string;
   ville?: string;
-  
+   
+   // Champs pour médecins (pas pour secrétaires)
+  rpps?: string; // Seulement pour médecins
   // Champs communs à médecins et secrétaires
   specialite?: string;
-  rpps?: string;
   adresseHopital?: string;
   statut?: 'en_attente' | 'approuve' | 'refuse';
   

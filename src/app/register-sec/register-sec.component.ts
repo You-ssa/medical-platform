@@ -19,7 +19,6 @@ export class RegisterSecComponent {
   email = '';
   telephone = '';
   specialite = '';
-  rpps = '';
   adresseHopital = '';
   poste = '';
   departement = '';
@@ -162,7 +161,7 @@ export class RegisterSecComponent {
         email: this.email,
         telephone: this.telephone,
         specialite: this.specialite,
-        rpps: this.rpps || undefined,
+        // SUPPRIMEZ cette ligne : rpps: this.rpps || undefined,
         adresseHopital: this.adresseHopital,
         poste: this.poste,
         departement: this.departement,
@@ -171,7 +170,7 @@ export class RegisterSecComponent {
         statut: 'en_attente',
         dateInscription: new Date().toISOString()
       };
-
+      
       await this.userService.createSecretaire(user, this.photoFile);
 
       this.successMessage = 'Demande d\'inscription envoyée ! Votre compte sera activé après validation par l\'administrateur.';
