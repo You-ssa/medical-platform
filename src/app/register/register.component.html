@@ -1,3 +1,4 @@
+<!-- src/app/register/register.component.html -->
 <div class="auth-container">
   <div class="auth-card">
 
@@ -15,7 +16,7 @@
       <i class="fas fa-spinner fa-spin"></i> Chargement des données...
     </div>
 
-    <form (ngSubmit)="registerPatient()" *ngIf="!dataLoading">
+    <form (ngSubmit)="verifyCode()" *ngIf="!dataLoading">
 
       <!-- Étape 1 : Photo + Nom/Prénom + Sexe -->
       <div *ngIf="currentStep === 1" class="step">
@@ -47,7 +48,7 @@
         </div>
 
         <div class="step-buttons">
-          <button type="button" (click)="nextStep()">Suivant …</button>
+          <button type="button" (click)="nextStep()">Suivant →</button>
         </div>
       </div>
 
@@ -83,8 +84,8 @@
         </div>
 
         <div class="step-buttons">
-          <button type="button" (click)="prevStep()">… Retour</button>
-          <button type="button" (click)="nextStep()">Suivant …</button>
+          <button type="button" (click)="prevStep()">← Retour</button>
+          <button type="button" (click)="nextStep()">Suivant →</button>
         </div>
       </div>
 
@@ -108,8 +109,57 @@
         </div>
 
         <div class="step-buttons">
-          <button type="button" (click)="prevStep()">… Retour</button>
-          <button type="submit">Créer mon compte</button>
+          <button type="button" (click)="prevStep()">← Retour</button>
+          <button type="button" (click)="nextStep()">Suivant →</button>
+        </div>
+      </div>
+
+      <!-- ✅ ÉTAPE 4 NOUVEAU : Vérification Email -->
+      <div *ngIf="currentStep === 4" class="step verification-step">
+        <div class="verification-icon">
+          <i class="fas fa-envelope"></i>
+        </div>
+
+        <h3>Vérifiez votre email</h3>
+        <p class="verification-info">
+          Nous avons envoyé un code à 6 chiffres à<br>
+          <strong>{{ email }}</strong>
+        </p>
+
+        <div class="form-group">
+          <label for="verificationCode">Code de vérification *</label>
+          <input 
+            type="text" 
+            id="verificationCode" 
+            [(ngModel)]="verificationCode" 
+            name="verificationCode" 
+            placeholder="000000" 
+            maxlength="6"
+            class="code-input"
+            [disabled]="codeVerified"
+            required>
+        </div>
+
+        <div class="resend-section" *ngIf="!codeVerified">
+          <p *ngIf="resendCooldown > 0" class="resend-cooldown">
+            Renvoyer le code dans {{ resendCooldown }}s
+          </p>
+          <button 
+            type="button" 
+            class="btn-link" 
+            (click)="resendCode()"
+            [disabled]="resendCooldown > 0">
+            <i class="fas fa-redo"></i> Renvoyer le code
+          </button>
+        </div>
+
+        <div class="step-buttons">
+          <button type="button" (click)="prevStep()" [disabled]="isLoading || codeVerified">← Retour</button>
+          <button type="submit" [disabled]="isLoading || codeVerified || verificationCode.length !== 6">
+            <span *ngIf="!isLoading && !codeVerified">Vérifier et créer mon compte</span>
+            <span *ngIf="isLoading"><i class="fas fa-spinner fa-spin"></i> Vérification...</span>
+            <span *ngIf="codeVerified"><i class="fas fa-check"></i> Vérifié !</span>
+          </button>
         </div>
       </div>
 

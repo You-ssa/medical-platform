@@ -1,3 +1,4 @@
+<!-- src/app/login/login.component.html (VERSION MISE À JOUR) -->
 <div class="auth-container">
   <div class="auth-wrapper">
     <!-- Formulaire Login -->
@@ -29,7 +30,8 @@
           <i class="fas fa-user-shield"></i> Admin
         </button>
       </div>
-<h2 [innerHTML]="getPhraseForUser()"></h2>
+      
+      <h2 [innerHTML]="getPhraseForUser()"></h2>
 
       <form (ngSubmit)="login()">
         <div class="form-group">
@@ -40,6 +42,11 @@
         <div class="form-group">
           <label for="motDePasse">Mot de passe</label>
           <input type="password" id="motDePasse" [(ngModel)]="motDePasse" name="motDePasse" placeholder="••••••••" required>
+        </div>
+
+        <!-- ✅ NOUVEAU : Lien mot de passe oublié -->
+        <div class="forgot-password-link">
+          <a routerLink="/forgot-password">Mot de passe oublié ?</a>
         </div>
 
         <div class="error-message" *ngIf="errorMessage">
@@ -58,7 +65,6 @@
     </div>
 
     <!-- Image à droite -->
-<!-- Image à droite -->
-<div class="auth-image" [style.background-image]="'url(' + getImageForUser() + ')'"></div>
+    <div class="auth-image" [style.background-image]="'url(' + getImageForUser() + ')'"></div>
   </div>
 </div>

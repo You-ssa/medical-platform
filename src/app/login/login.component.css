@@ -339,7 +339,24 @@ form {
   background: rgba(102, 126, 234, 0.1);
   text-decoration: none;
 }
+/* Ajouter à src/app/login/login.component.css */
 
+.forgot-password-link {
+  text-align: right;
+  margin: -10px 0 15px 0;
+}
+
+.forgot-password-link a {
+  color: #667eea;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s;
+}
+
+.forgot-password-link a:hover {
+  color: #5568d3;
+  text-decoration: underline;
+}
 /* ===== Responsive ===== */
 @media (max-width: 900px) {
   .auth-wrapper {

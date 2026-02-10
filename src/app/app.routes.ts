@@ -12,6 +12,8 @@ import { HomeMedComponent } from './home-med/home-med.component';
 import { HomeSecComponent } from './home-sec/home-sec.component';
 import { AdminComponent } from './admin/admin.component';
 import { InitAdminComponent } from './init-admin/init-admin.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 
 // 🆕 Nouveaux imports
 import { DashboardComponent } from './admin/dashboard/dashboard.component';
@@ -39,7 +41,8 @@ export const routes: Routes = [
   { path: 'home-user', component: HomeUserComponent },
   { path: 'home-med', component: HomeMedComponent },
   { path: 'home-sec', component: HomeSecComponent },
-  
+  { path: 'forgot-password', component: ForgotPasswordComponent },      // ✅ NOUVEAU
+  { path: 'reset-password', component: ResetPasswordComponent }, 
   // 🆕 Admin - Routes mises à jour
   { 
     path: 'admin', 
