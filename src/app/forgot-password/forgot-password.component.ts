@@ -16,7 +16,6 @@ export class ForgotPasswordComponent {
   userType: 'patient' | 'medecin' | 'secretaire' | 'admin' = 'patient';
   
   errorMessage = '';
-  successMessage = '';
   isLoading = false;
   emailSent = false;
 
@@ -27,7 +26,6 @@ export class ForgotPasswordComponent {
 
   async requestReset() {
     this.errorMessage = '';
-    this.successMessage = '';
 
     if (!this.email) {
       this.errorMessage = 'Veuillez saisir votre adresse email';
@@ -50,18 +48,32 @@ export class ForgotPasswordComponent {
 
       // Vérifier si l'email existe ou non
       if (response.exists === false) {
-        this.errorMessage = `Cette adresse email n'existe pas pour ${this.userType}`;
+        this.errorMessage = `Cette adresse email n'existe pas pour un compte ${this.getUserTypeLabel()}`;
         this.emailSent = false;
       } else {
         this.emailSent = true;
-        this.successMessage = response.message || 'Un email de réinitialisation a été envoyé.';
+        // Nous n'utilisons plus successMessage dans le template
+        // mais nous gardons la réponse pour le log
+        console.log('Password reset email sent:', response.message);
       }
 
     } catch (error: any) {
-      this.errorMessage = error?.error?.message || 'Une erreur est survenue';
+      this.errorMessage = error?.error?.message || 'Une erreur est survenue. Veuillez réessayer.';
+      this.emailSent = false;
     } finally {
       this.isLoading = false;
     }
+  }
+
+  // Méthode pour obtenir le label de l'utilisateur en français
+  getUserTypeLabel(): string {
+    const labels = {
+      'patient': 'Patient',
+      'medecin': 'Médecin',
+      'secretaire': 'Secrétaire',
+      'admin': 'Administrateur'
+    };
+    return labels[this.userType] || 'Utilisateur';
   }
 
   goToLogin() {

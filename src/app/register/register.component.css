@@ -64,7 +64,6 @@ body {
   z-index: 1;
   border: 1px solid rgba(255, 255, 255, 0.3);
   margin-top: 10px;
-
 }
 
 @keyframes fadeUp {
@@ -358,8 +357,7 @@ form {
 
 /* 🔴 RETOUR - Rose/Rouge */
 .step-buttons button:first-child {
-    background: linear-gradient(135deg, #26722ce7 100%);
-
+  background: linear-gradient(135deg, #26722ce7 100%);
   color: white;
   box-shadow: 0 6px 20px rgba(126, 221, 100, 0.25);
 }
@@ -371,20 +369,19 @@ form {
 
 /* 🟢 SUIVANT - Bleu */
 .step-buttons button:not(:first-child):not([type="submit"]) {
-  background: linear-gradient(135deg,  #1965a8 100%);
+  background: linear-gradient(135deg, #1965a8 100%);
   color: white;
   box-shadow: 0 6px 20px rgba(100, 147, 192, 0.25);
 }
 
 .step-buttons button:not(:first-child):not([type="submit"]):hover {
-  
   transform: translateY(-3px) scale(1.02);
   box-shadow: 0 10px 25px rgba(100, 147, 192, 0.35);
 }
 
 /* 🟣 CRÉER COMPTE - Vert */
 .step-buttons button[type="submit"] {
-  background: linear-gradient(135deg , #cc5474 100%);
+  background: linear-gradient(135deg, #cc5474 100%);
   color: white;
   box-shadow: 0 6px 20px rgba(104, 141, 107, 0.25);
   font-size: 15px;
@@ -432,6 +429,171 @@ form {
 
 .step-indicator span.active::before {
   background: rgba(100, 147, 192, 0.2);
+}
+
+/* ===== ÉTAPE 4 : Vérification Email ===== */
+.verification-step {
+  text-align: center;
+  padding: 10px 0;
+}
+
+.verification-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 20px;
+  background: linear-gradient(135deg, #6493c0 0%, #4a7ca9 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse 2s infinite;
+  box-shadow: 0 10px 25px rgba(100, 147, 192, 0.3);
+}
+
+.verification-icon i {
+  font-size: 36px;
+  color: white;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.verification-step h3 {
+  font-size: 24px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 15px;
+}
+
+.verification-info {
+  color: #64748b;
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 30px;
+  padding: 0 20px;
+}
+
+.verification-info strong {
+  color: #2d3748;
+  font-weight: 600;
+}
+
+/* Champ de code */
+.code-input {
+  text-align: center;
+  font-size: 24px !important;
+  font-weight: 700;
+  letter-spacing: 10px;
+  padding: 18px 10px !important;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0 !important;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.code-input:focus {
+  border-color: #6493c0 !important;
+  box-shadow: 0 0 0 4px rgba(100, 147, 192, 0.2) !important;
+  transform: translateY(-3px);
+  letter-spacing: 12px;
+}
+
+.code-input:disabled {
+  background: #f1f5f9;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+/* Section renvoyer le code */
+.resend-section {
+  margin: 20px 0;
+  padding: 15px;
+  background: #f8fafc;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+}
+
+.resend-cooldown {
+  color: #ef4444;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 8px;
+  animation: fadeInOut 1s infinite;
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: #6493c0;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.btn-link:hover:not(:disabled) {
+  color: #4a7ca9;
+  background: rgba(100, 147, 192, 0.1);
+  transform: translateY(-2px);
+}
+
+.btn-link:disabled {
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.btn-link i {
+  font-size: 14px;
+  transition: transform 0.3s ease;
+}
+
+.btn-link:hover:not(:disabled) i {
+  transform: rotate(90deg);
+}
+
+/* Style pour le bouton vérifié */
+.step-buttons button:has(i.fa-check) {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.25) !important;
+}
+
+.step-buttons button:has(i.fa-check):hover {
+  transform: none !important;
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.25) !important;
+  cursor: default;
+}
+
+/* Loading message */
+.loading-message {
+  text-align: center;
+  padding: 30px;
+  color: #64748b;
+  font-weight: 500;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.loading-message i {
+  font-size: 20px;
+  color: #6493c0;
 }
 
 /* ===== Messages ===== */
@@ -539,6 +701,39 @@ form {
   .photo-circle i {
     font-size: 26px;
   }
+  
+  /* Responsive pour l'étape 4 */
+  .verification-step {
+    padding: 0;
+  }
+  
+  .verification-icon {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .verification-icon i {
+    font-size: 30px;
+  }
+  
+  .verification-step h3 {
+    font-size: 22px;
+  }
+  
+  .verification-info {
+    font-size: 14px;
+    padding: 0 10px;
+  }
+  
+  .code-input {
+    font-size: 20px !important;
+    letter-spacing: 8px;
+    padding: 16px 8px !important;
+  }
+  
+  .code-input:focus {
+    letter-spacing: 10px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -572,5 +767,32 @@ form {
   
   .tab-btn i {
     font-size: 18px;
+  }
+  
+  /* Responsive pour l'étape 4 */
+  .verification-icon {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .verification-icon i {
+    font-size: 26px;
+  }
+  
+  .verification-step h3 {
+    font-size: 20px;
+  }
+  
+  .code-input {
+    font-size: 18px !important;
+    letter-spacing: 6px;
+  }
+  
+  .code-input:focus {
+    letter-spacing: 8px;
+  }
+  
+  .resend-section {
+    padding: 12px;
   }
 }
