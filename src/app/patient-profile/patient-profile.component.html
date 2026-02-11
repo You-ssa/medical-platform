@@ -1,0 +1,170 @@
+<!-- ===================================================== 
+     PATIENT PROFILE TEMPLATE - patient-profile.component.html
+     ===================================================== -->
+
+<div class="profile-container">
+  <div class="profile-header">
+    <h1>Mon Profil</h1>
+    <p class="subtitle">Gérez vos informations personnelles</p>
+  </div>
+
+  <!-- Success/Error Messages -->
+  <div *ngIf="successMessage" class="alert alert-success fade-in">
+    {{ successMessage }}
+  </div>
+  <div *ngIf="errorMessage" class="alert alert-danger fade-in">
+    {{ errorMessage }}
+  </div>
+
+  <div class="profile-content">
+    <!-- PHOTO SECTION -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="card-icon bg-primary">IMG</span>
+          Photo de Profil
+        </div>
+      </div>
+
+      <div class="photo-section">
+        <div class="photo-preview">
+          <img [src]="getPhotoSrc() || getDefaultAvatar()" 
+               alt="Photo de profil"
+               class="profile-photo">
+        </div>
+
+        <div class="photo-actions">
+          <label for="photoUpload" class="btn btn-secondary">
+            Choisir une photo
+          </label>
+          <input type="file" 
+                 id="photoUpload" 
+                 accept="image/*" 
+                 (change)="onFileSelected($event)"
+                 style="display: none;">
+          
+          <button *ngIf="selectedFile" 
+                  class="btn btn-primary"
+                  (click)="uploadPhoto()">
+            Enregistrer la photo
+          </button>
+        </div>
+
+        <div class="photo-hint">
+          Formats acceptés: JPG, PNG, GIF (Max 5MB)
+        </div>
+      </div>
+    </div>
+
+    <!-- INFORMATION FORM -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="card-icon bg-success">INFO</span>
+          Informations Personnelles
+        </div>
+        <button *ngIf="!isEditMode" 
+                class="btn btn-primary btn-sm"
+                (click)="toggleEditMode()">
+          Modifier
+        </button>
+      </div>
+
+      <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+        <div class="form-grid">
+          <!-- Nom -->
+          <div class="form-group">
+            <label class="form-label required">Nom</label>
+            <input type="text" 
+                   class="form-control" 
+                   formControlName="nom"
+                   placeholder="Votre nom">
+            <div *ngIf="profileForm.get('nom')?.invalid && profileForm.get('nom')?.touched" 
+                 class="form-error">
+              Le nom est requis
+            </div>
+          </div>
+
+          <!-- Prénom -->
+          <div class="form-group">
+            <label class="form-label required">Prénom</label>
+            <input type="text" 
+                   class="form-control" 
+                   formControlName="prenom"
+                   placeholder="Votre prénom">
+            <div *ngIf="profileForm.get('prenom')?.invalid && profileForm.get('prenom')?.touched" 
+                 class="form-error">
+              Le prénom est requis
+            </div>
+          </div>
+
+          <!-- Sexe -->
+          <div class="form-group">
+            <label class="form-label required">Sexe</label>
+            <select class="form-control form-select" formControlName="sexe">
+              <option value="">Sélectionner</option>
+              <option value="Homme">Homme</option>
+              <option value="Femme">Femme</option>
+            </select>
+          </div>
+
+          <!-- Email -->
+          <div class="form-group">
+            <label class="form-label required">Email</label>
+            <input type="email" 
+                   class="form-control" 
+                   formControlName="email"
+                   placeholder="email@exemple.com">
+            <div class="form-hint">L'email ne peut pas être modifié</div>
+          </div>
+
+          <!-- Téléphone -->
+          <div class="form-group">
+            <label class="form-label required">Téléphone</label>
+            <input type="tel" 
+                   class="form-control" 
+                   formControlName="telephone"
+                   placeholder="+216 XX XXX XXX">
+          </div>
+
+          <!-- Pays -->
+          <div class="form-group">
+            <label class="form-label required">Pays</label>
+            <select class="form-control form-select"
+                    formControlName="pays"
+                    (change)="onPaysChange()">
+              <option value="">Sélectionner</option>
+              <option *ngFor="let p of paysList" [value]="p.nom">{{ p.nom }}</option>
+            </select>
+          </div>
+
+          <!-- Ville -->
+          <div class="form-group">
+            <label class="form-label required">Ville</label>
+            <select class="form-control form-select"
+                    formControlName="ville"
+                    [disabled]="!villesList.length">
+              <option value="">Sélectionner</option>
+              <option *ngFor="let v of villesList" [value]="v">{{ v }}</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div *ngIf="isEditMode" class="form-actions">
+          <button type="button" 
+                  class="btn btn-secondary"
+                  (click)="cancelEdit()">
+            Annuler
+          </button>
+          <button type="submit" 
+                  class="btn btn-success"
+                  [disabled]="profileForm.invalid || loading">
+            <span *ngIf="!loading">Enregistrer</span>
+            <span *ngIf="loading">Enregistrement...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

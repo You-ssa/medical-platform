@@ -1,0 +1,119 @@
+/* =====================================================
+   PATIENT PROFILE STYLES - patient-profile.component.scss
+   ===================================================== */
+
+.profile-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.profile-header {
+  margin-bottom: 32px;
+
+  h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    color: var(--text-secondary);
+  }
+}
+
+.profile-content {
+  display: grid;
+  gap: 24px;
+}
+
+/* ============== PHOTO SECTION ============== */
+.photo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px;
+}
+
+.photo-preview {
+  margin-bottom: 24px;
+}
+
+.profile-photo {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid var(--primary-blue);
+  box-shadow: var(--shadow-lg);
+}
+
+.photo-actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.photo-hint {
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* ============== FORM GRID ============== */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============== FORM ACTIONS ============== */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-color);
+}
+
+/* ============== ACCOUNT INFO ============== */
+.account-info {
+  padding: 16px 0;
+}
+
+.account-actions {
+  display: flex;
+  gap: 12px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-color);
+}
+
+/* ============== ALERTS ============== */
+.alert {
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  margin-bottom: 24px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.alert-success {
+  background: #D1FAE5;
+  color: #065F46;
+  border-left: 4px solid #10B981;
+}
+
+.alert-danger {
+  background: #FEE2E2;
+  color: #991B1B;
+  border-left: 4px solid #EF4444;
+}

@@ -14,6 +14,8 @@ import { AdminComponent } from './admin/admin.component';
 import { InitAdminComponent } from './init-admin/init-admin.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { PatientProfileComponent } from './patient-profile/patient-profile.component';  // CHEMIN CORRIGÉ
+import { DossierMedicalComponent } from './dossier-medical/dossier-medical.component';  // CHEMIN CORRIGÉ
 
 // 🆕 Nouveaux imports
 import { DashboardComponent } from './admin/dashboard/dashboard.component';
@@ -41,20 +43,32 @@ export const routes: Routes = [
   { path: 'home-user', component: HomeUserComponent },
   { path: 'home-med', component: HomeMedComponent },
   { path: 'home-sec', component: HomeSecComponent },
-  { path: 'forgot-password', component: ForgotPasswordComponent },      // ✅ NOUVEAU
+  { path: 'forgot-password', component: ForgotPasswordComponent }, 
   { path: 'reset-password', component: ResetPasswordComponent }, 
+
   // 🆕 Admin - Routes mises à jour
   { 
     path: 'admin', 
     children: [
       { path: '', component: AdminComponent },  // Liste des demandes (ancien admin)
-      { path: 'dashboard', component: DashboardComponent },  // Nouveau dashboard
+      { path: 'dashboard', component: DashboardComponent },
       { path: 'gestion-patients', component: GestionPatientsComponent },
       { path: 'gestion-medecins', component: GestionMedecinsComponent }
     ]
   },
   { path: 'init-admin', component: InitAdminComponent },
-  
+
+  // Routes patient
+  {
+    path: 'patient',
+    children: [
+      { path: 'home', component: HomeUserComponent },
+      { path: 'profil', component: PatientProfileComponent },
+      { path: 'dossier-medical', component: DossierMedicalComponent },
+      { path: '', redirectTo: 'home', pathMatch: 'full' }
+    ]
+  },
+
   // Redirection 404
   { path: '**', redirectTo: '' }
 ];

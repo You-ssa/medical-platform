@@ -1,1 +1,343 @@
-<p>home-user works!</p>
+<!-- ===================================================== 
+     HOME USER TEMPLATE - home-user.component.html
+     ===================================================== -->
+
+<div class="dashboard-container">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <h2>
+        <span class="icon">🏥</span>
+        CHU Fattouma
+      </h2>
+    </div>
+    
+    <nav>
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-item">
+          <a [class.active]="activeMenu === 'dashboard'" 
+             (click)="setActiveMenu('dashboard')"
+             class="sidebar-nav-link">
+            <span class="icon">📊</span>
+            Tableau de Bord
+          </a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a [class.active]="activeMenu === 'profil'" 
+             routerLink="/patient/profil"
+             (click)="setActiveMenu('profil')"
+             class="sidebar-nav-link">
+            <span class="icon">👤</span>
+            Mon Profil
+          </a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a [class.active]="activeMenu === 'dossier'" 
+             routerLink="/patient/dossier-medical"
+             (click)="setActiveMenu('dossier')"
+             class="sidebar-nav-link">
+            <span class="icon">📋</span>
+            Mon Dossier Médical
+          </a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a [class.active]="activeMenu === 'rendez-vous'" 
+             routerLink="/patient/rendez-vous"
+             (click)="setActiveMenu('rendez-vous')"
+             class="sidebar-nav-link">
+            <span class="icon">📅</span>
+            Rendez-vous
+          </a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a [class.active]="activeMenu === 'consultation'" 
+             routerLink="/patient/consultation"
+             (click)="setActiveMenu('consultation')"
+             class="sidebar-nav-link">
+            <span class="icon">💬</span>
+            Consultation en Ligne
+          </a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a [class.active]="activeMenu === 'chatbot'" 
+             routerLink="/patient/chatbot"
+             (click)="setActiveMenu('chatbot')"
+             class="sidebar-nav-link">
+            <span class="icon">🤖</span>
+            Chatbot Intelligent
+          </a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a [class.active]="activeMenu === 'notifications'" 
+             routerLink="/patient/notifications"
+             (click)="setActiveMenu('notifications')"
+             class="sidebar-nav-link">
+            <span class="icon">🔔</span>
+            Notifications
+            <span *ngIf="stats.notifications_non_lues > 0" 
+                  class="badge badge-danger" 
+                  style="margin-left: auto;">
+              {{ stats.notifications_non_lues }}
+            </span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+    <!-- HEADER -->
+    <!-- HEADER -->
+<header class="header">
+  <div class="header-title">
+    <h1>Bienvenue, {{ patient?.prenom }} !</h1>
+  </div>
+  <div class="header-actions">
+    <div class="user-info" routerLink="/patient/profil">
+      <!-- Avatar -->
+      <img [src]="getPatientAvatar()" alt="Avatar" class="user-avatar">
+
+      <!-- Nom & Prénom -->
+      <div class="user-details">
+        <div class="user-name">
+          {{ patient?.prenom }} {{ patient?.nom }}
+        </div>
+        <div class="user-role">
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+    <!-- CONTENT AREA -->
+    <main class="content">
+      <div *ngIf="loading" class="text-center p-3">
+        <div class="spinner">Chargement...</div>
+      </div>
+
+      <div *ngIf="!loading" class="fade-in">
+        <!-- STATISTICS CARDS -->
+        <div class="grid grid-4 mb-3">
+          <div class="stat-card slide-in">
+            <div class="stat-header">
+              <div>
+                <div class="stat-label">Prochains RDV</div>
+                <div class="stat-value">{{ stats.prochains_rdv }}</div>
+                <div class="stat-description">Planifiés</div>
+              </div>
+              <div class="stat-icon bg-primary">📅</div>
+            </div>
+          </div>
+
+          <div class="stat-card green slide-in" style="animation-delay: 0.1s;">
+            <div class="stat-header">
+              <div>
+                <div class="stat-label">Consultations</div>
+                <div class="stat-value">{{ stats.consultations_totales }}</div>
+                <div class="stat-description">Total effectuées</div>
+              </div>
+              <div class="stat-icon bg-success">💬</div>
+            </div>
+          </div>
+
+          <div class="stat-card orange slide-in" style="animation-delay: 0.2s;">
+            <div class="stat-header">
+              <div>
+                <div class="stat-label">Documents</div>
+                <div class="stat-value">{{ stats.documents_medicaux }}</div>
+                <div class="stat-description">Fichiers médicaux</div>
+              </div>
+              <div class="stat-icon bg-warning">📄</div>
+            </div>
+          </div>
+
+          <div class="stat-card red slide-in" style="animation-delay: 0.3s;">
+            <div class="stat-header">
+              <div>
+                <div class="stat-label">Notifications</div>
+                <div class="stat-value">{{ stats.notifications_non_lues }}</div>
+                <div class="stat-description">Non lues</div>
+              </div>
+              <div class="stat-icon bg-danger">🔔</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MAIN GRID -->
+        <div class="grid grid-2">
+          <!-- RENDEZ-VOUS À VENIR -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="card-icon bg-primary">📅</span>
+                Rendez-vous à venir
+              </div>
+              <div class="card-actions">
+                <button class="btn btn-primary btn-sm" 
+                        routerLink="/patient/rendez-vous">
+                  ➕ Prendre Nouveau Rendez-vous
+                </button>
+              </div>
+            </div>
+
+            <div *ngIf="prochainsRendezVous.length === 0" class="text-center p-3 text-muted">
+              Aucun rendez-vous planifié
+            </div>
+
+            <div *ngFor="let rdv of prochainsRendezVous" class="rdv-item">
+              <div class="rdv-date-badge">
+                <div class="rdv-day">{{ formatDate(rdv.date_rdv) | slice:0:3 }}</div>
+                <div class="rdv-date-number">{{ formatDate(rdv.date_rdv) | slice:0:2 }}</div>
+              </div>
+              <div class="rdv-details">
+                <div class="rdv-time">{{ formatTime(rdv.date_rdv) }}</div>
+                <div class="rdv-doctor">Dr. {{ rdv.medecin?.nom }}</div>
+                <div class="rdv-specialty">{{ rdv.medecin?.specialite }}</div>
+              </div>
+              <div class="rdv-actions">
+                <span [class]="'badge ' + getStatusBadgeClass(rdv.statut)">
+                  {{ rdv.statut }}
+                </span>
+                <button class="btn btn-warning btn-sm">Modifier</button>
+                <button class="btn btn-danger btn-sm">Annuler</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- MON DOSSIER MÉDICAL -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="card-icon bg-success">💚</span>
+                Mon Dossier Médical
+              </div>
+              <button class="btn btn-success btn-sm" 
+                      routerLink="/patient/dossier-medical">
+                ➕ Accéder à mon Dossier
+              </button>
+            </div>
+
+            <div class="dossier-preview">
+              <div class="info-row">
+                <span class="info-label">Groupe Sanguin :</span>
+                <span class="info-value badge badge-primary">O+</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Allergies :</span>
+                <span class="info-value">Pénicilline</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Maladies chroniques :</span>
+                <span class="info-value">Diabète de type 2, Metformâ</span>
+              </div>
+              <div class="mt-2">
+                <button class="btn btn-secondary" 
+                        style="width: 100%;"
+                        routerLink="/patient/dossier-medical">
+                  📤 Téléverser Document
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BOTTOM SECTION -->
+        <div class="grid grid-2 mt-3">
+          <!-- CONSULTATION EN LIGNE -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="card-icon bg-primary">💬</span>
+                Consultation en Ligne
+              </div>
+            </div>
+
+            <div class="consultation-preview">
+              <div class="consultation-info">
+                <img src="https://via.placeholder.com/60" alt="Médecin" class="medecin-avatar">
+                <div>
+                  <div class="medecin-name">Nadia Karim</div>
+                  <div class="medecin-specialty">Cardiologie</div>
+                  <span class="badge badge-success">Melorésique</span>
+                </div>
+              </div>
+
+              <div class="consultation-details mt-2">
+                <div class="info-row">
+                  <span class="info-label">🩸 Groupe Sanguin :</span>
+                  <span class="info-value">O+</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">💊 Maladies chroniques :</span>
+                  <span class="info-value">Diabète de type 2</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">💉 Médicaments en cours :</span>
+                  <span class="info-value">Metformine, Lisinopril</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CHATBOT INTELLIGENT -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="card-icon bg-primary">🤖</span>
+                Chatbot Intelligent
+              </div>
+            </div>
+
+            <div class="chatbot-preview">
+              <div class="chatbot-status">
+                <div class="bot-icon">🤖</div>
+                <div>
+                  <div class="bot-title">Disponible 24/7</div>
+                  <div class="bot-subtitle">Poser vos symptômes</div>
+                </div>
+              </div>
+              <button class="btn btn-primary" 
+                      style="width: 100%; margin-top: 16px;"
+                      routerLink="/patient/chatbot">
+                💬 Poser mes symptômes
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- NOTIFICATIONS SECTION -->
+        <div class="card mt-3">
+          <div class="card-header">
+            <div class="card-title">
+              <span class="card-icon bg-warning">🔔</span>
+              Notifications
+            </div>
+            <div class="card-actions">
+              <button class="btn btn-secondary btn-sm">Voir Tout</button>
+              <button class="btn btn-primary btn-sm">Email</button>
+            </div>
+          </div>
+
+          <div *ngIf="recentNotifications.length === 0" class="text-center p-3 text-muted">
+            Aucune notification
+          </div>
+
+          <div *ngFor="let notif of recentNotifications" 
+               class="notification-item"
+               [class.unread]="!notif.lue"
+               (click)="markNotificationAsRead(notif)">
+            <div class="notif-icon">{{ getNotificationIcon(notif.type_notification) }}</div>
+            <div class="notif-content">
+              <div class="notif-title">{{ notif.titre }}</div>
+              <div class="notif-message">{{ notif.message }}</div>
+              <div class="notif-time">{{ formatTime(notif.created_at!) }}</div>
+            </div>
+            <div *ngIf="!notif.lue" class="notif-badge">Snjour</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>

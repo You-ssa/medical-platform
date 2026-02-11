@@ -152,4 +152,5 @@ export class LoginComponent {
         return 'Bienvenue';
     }
   }
+  
 }

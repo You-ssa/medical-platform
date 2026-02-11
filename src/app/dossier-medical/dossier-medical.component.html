@@ -1,0 +1,279 @@
+<!-- ===================================================== 
+     DOSSIER MEDICAL TEMPLATE - dossier-medical.component.html
+     ===================================================== -->
+
+<div class="dossier-container">
+  <div class="dossier-header">
+    <h1>Mon Dossier Médical</h1>
+    <p class="subtitle">Gérez votre dossier de santé en toute sécurité</p>
+  </div>
+
+  <!-- Success/Error Messages -->
+  <div *ngIf="successMessage" class="alert alert-success fade-in">
+    ✓ {{ successMessage }}
+  </div>
+  <div *ngIf="errorMessage" class="alert alert-danger fade-in">
+    ✗ {{ errorMessage }}
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs-container">
+    <button [class.active]="activeTab === 'infos'"
+            (click)="setActiveTab('infos')"
+            class="tab-button">
+      📋 Informations Médicales
+    </button>
+    <button [class.active]="activeTab === 'contacts'"
+            (click)="setActiveTab('contacts')"
+            class="tab-button">
+      🚨 Contacts d'Urgence
+    </button>
+    <button [class.active]="activeTab === 'documents'"
+            (click)="setActiveTab('documents')"
+            class="tab-button">
+      📄 Documents & Historique
+    </button>
+  </div>
+
+  <!-- TAB: INFORMATIONS MÉDICALES -->
+  <div *ngIf="activeTab === 'infos'" class="tab-content fade-in">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="card-icon bg-primary">💚</span>
+          Dossier Médical
+        </div>
+        <button *ngIf="!isEditMode && dossierExists" 
+                class="btn btn-primary btn-sm"
+                (click)="toggleEditMode()">
+          ✏️ Modifier
+        </button>
+      </div>
+
+      <form [formGroup]="dossierForm" (ngSubmit)="onSubmitDossier()">
+        <!-- Section 1: Informations Personnelles -->
+        <div class="form-section">
+          <h3 class="section-title">1️⃣ Informations Personnelles</h3>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label required">Date de Naissance</label>
+              <input type="date" 
+                     class="form-control" 
+                     formControlName="date_naissance">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label required">Groupe Sanguin</label>
+              <select class="form-control form-select" formControlName="groupe_sanguin">
+                <option value="">Sélectionner</option>
+                <option *ngFor="let groupe of groupesSanguins" [value]="groupe">
+                  {{ groupe }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Informations Médicales -->
+        <div class="form-section">
+          <h3 class="section-title">2️⃣ Informations Médicales</h3>
+
+          <!-- Maladies Chroniques -->
+          <div class="form-group">
+            <label class="form-label">Maladies Chroniques</label>
+            <div class="checkbox-grid">
+              <label *ngFor="let maladie of maladiesCommunesChroniques" class="checkbox-item">
+                <input type="checkbox" 
+                       [checked]="isItemSelected(dossierForm.get('maladies_chroniques')?.value, maladie)"
+                       (change)="toggleArrayItem(dossierForm.get('maladies_chroniques')?.value, maladie)">
+                <span>{{ maladie }}</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Maladies Héréditaires -->
+          <div class="form-group">
+            <label class="form-label">Maladies Héréditaires</label>
+            <div class="checkbox-grid">
+              <label *ngFor="let maladie of maladiesCommunesHereditaires" class="checkbox-item">
+                <input type="checkbox"
+                       [checked]="isItemSelected(dossierForm.get('maladies_hereditaires')?.value, maladie)"
+                       (change)="toggleArrayItem(dossierForm.get('maladies_hereditaires')?.value, maladie)">
+                <span>{{ maladie }}</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Allergies -->
+          <div class="form-group">
+            <label class="form-label">Allergies</label>
+            <div class="checkbox-grid">
+              <label *ngFor="let allergie of allergiesCommunes" class="checkbox-item">
+                <input type="checkbox"
+                       [checked]="isItemSelected(dossierForm.get('allergies')?.value, allergie)"
+                       (change)="toggleArrayItem(dossierForm.get('allergies')?.value, allergie)">
+                <span>{{ allergie }}</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Médicaments en Cours -->
+          <div class="form-group">
+            <label class="form-label">Médicaments en Cours</label>
+            <textarea class="form-control" 
+                      rows="3"
+                      placeholder="Liste des médicaments que vous prenez actuellement (un par ligne)"></textarea>
+            <div class="form-hint">Séparez chaque médicament par une nouvelle ligne</div>
+          </div>
+
+          <!-- Observations Médicales -->
+          <div class="form-group">
+            <label class="form-label">Observations Médicales</label>
+            <textarea class="form-control" 
+                      formControlName="observations_medicales"
+                      rows="4"
+                      placeholder="Autres informations médicales importantes"></textarea>
+          </div>
+        </div>
+
+        <!-- Section 4: Consentements -->
+        <div class="form-section">
+          <h3 class="section-title">4️⃣ Consentements</h3>
+
+          <div class="form-group">
+            <label class="checkbox-item consent-item">
+              <input type="checkbox" formControlName="don_organes">
+              <span>
+                <strong>Don d'organes</strong>
+                <small>J'accepte le don d'organes en cas de décès</small>
+              </span>
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Directives Anticipées</label>
+            <textarea class="form-control" 
+                      formControlName="directives_anticipees"
+                      rows="4"
+                      placeholder="Indiquez vos souhaits concernant vos soins médicaux"></textarea>
+            <div class="form-hint">
+              Précisez vos volontés en matière de soins si vous ne pouvez plus les exprimer
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div *ngIf="isEditMode" class="form-actions">
+          <button type="button" 
+                  class="btn btn-secondary"
+                  (click)="toggleEditMode()">
+            ❌ Annuler
+          </button>
+          <button type="submit" 
+                  class="btn btn-success"
+                  [disabled]="dossierForm.invalid || loading">
+            <span *ngIf="!loading">💾 Enregistrer</span>
+            <span *ngIf="loading">⏳ Enregistrement...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TAB: CONTACTS D'URGENCE -->
+  <div *ngIf="activeTab === 'contacts'" class="tab-content fade-in">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="card-icon bg-danger">🚨</span>
+          Contacts d'Urgence
+        </div>
+        <button class="btn btn-primary btn-sm" (click)="addContact()">
+          ➕ Ajouter un Contact
+        </button>
+      </div>
+
+      <form [formGroup]="contactsForm" (ngSubmit)="onSubmitContacts()">
+        <div formArrayName="contacts">
+          <div *ngFor="let contact of contacts.controls; let i = index" 
+               [formGroupName]="i"
+               class="contact-item">
+            <div class="contact-header">
+              <h4>Contact {{ i + 1 }}</h4>
+              <button type="button" 
+                      class="btn btn-danger btn-sm"
+                      (click)="removeContact(i)">
+                🗑️ Supprimer
+              </button>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label required">Nom Complet</label>
+                <input type="text" 
+                       class="form-control" 
+                       formControlName="nom"
+                       placeholder="Nom du contact">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label required">Lien</label>
+                <select class="form-control form-select" formControlName="lien">
+                  <option value="">Sélectionner</option>
+                  <option value="Père">Père</option>
+                  <option value="Mère">Mère</option>
+                  <option value="Frère">Frère</option>
+                  <option value="Sœur">Sœur</option>
+                  <option value="Conjoint(e)">Conjoint(e)</option>
+                  <option value="Ami(e)">Ami(e)</option>
+                  <option value="Autre">Autre</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label required">Téléphone</label>
+                <input type="tel" 
+                       class="form-control" 
+                       formControlName="telephone"
+                       placeholder="+216 XX XXX XXX">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" 
+                  class="btn btn-success"
+                  [disabled]="contactsForm.invalid || loading">
+            💾 Enregistrer les Contacts
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TAB: DOCUMENTS & HISTORIQUE -->
+  <div *ngIf="activeTab === 'documents'" class="tab-content fade-in">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="card-icon bg-warning">📄</span>
+          Documents Médicaux
+        </div>
+        <button class="btn btn-primary btn-sm">
+          📤 Téléverser Document
+        </button>
+      </div>
+
+      <div class="empty-state">
+        <div class="empty-icon">📁</div>
+        <h3>Aucun document pour le moment</h3>
+        <p>Téléversez vos analyses, imageries et autres documents médicaux</p>
+        <button class="btn btn-primary">
+          ➕ Ajouter le premier document
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
