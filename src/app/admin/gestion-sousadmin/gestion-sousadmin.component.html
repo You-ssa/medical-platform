@@ -1,0 +1,417 @@
+<div class="dashboard-layout">
+  <app-sidebar></app-sidebar>
+
+  <div class="main-content">
+    <app-header></app-header>
+
+    <div class="page-content">
+      <!-- Contenu original de la page Gestion Sous‑Admin -->
+      <div class="admin-page">
+
+        <!-- ── En-tête ─────────────────────────────────────────── -->
+        <div class="page-header">
+          <div class="header-left">
+            <div class="page-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </div>
+            <h1 class="page-title">Admins</h1>
+          </div>
+          <button class="btn-add" (click)="openAddAdminFlow()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Ajouter Admin
+          </button>
+        </div>
+
+        <!-- ── Filtres & Recherche ──────────────────────────────── -->
+        <div class="toolbar">
+          <div class="role-tabs">
+            <button [class.active]="filterRole === 'all'"       (click)="setFilter('all')">Tous</button>
+            <button [class.active]="filterRole === 'principal'" (click)="setFilter('principal')">Principal</button>
+            <button [class.active]="filterRole === 'sous-admin'"(click)="setFilter('sous-admin')">Sous Admin</button>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+            <div class="search-box">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <input
+                type="text"
+                placeholder="Rechercher par nom, prénom ou email…"
+                [(ngModel)]="searchQuery"
+                (input)="onSearch()"
+                class="search-input"
+              />
+            </div>
+
+            <!-- ── Sélecteur nombre d'éléments par page ── -->
+            <div class="per-page-select">
+              <span>Afficher</span>
+              <select [(ngModel)]="pageSize" (change)="onPageSizeChange()">
+                <option [value]="5">5</option>
+                <option [value]="10">10</option>
+                <option [value]="20">20</option>
+                <option [value]="50">50</option>
+              </select>
+              <span>par page</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Tableau ───────────────────────────────────────────── -->
+        <div class="table-card">
+          <div class="table-title">Gestion des Admins</div>
+
+          <div *ngIf="pagedAdmins.length === 0" class="empty-state">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+            </svg>
+            <p>Aucun administrateur trouvé.</p>
+          </div>
+
+          <table class="admin-table" *ngIf="pagedAdmins.length > 0">
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Email</th>
+                <th>Téléphone</th>
+                <th>Rôle</th>
+                <th>Statut</th>
+                <th>Date d'inscription</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let admin of pagedAdmins">
+                <td class="name-cell">{{ admin.nom }}</td>
+                <td>{{ admin.prenom }}</td>
+                <td class="email-cell">{{ admin.email }}</td>
+                <td>{{ admin.telephone || '—' }}</td>
+                <td>
+                  <span class="role-badge"
+                    [class.principal]="admin.role === 'principal'"
+                    [class.sousadmin]="admin.role !== 'principal'">
+                    {{ getRoleLabel(admin.role) }}
+                  </span>
+                </td>
+                <td><span class="status-badge active">Actif</span></td>
+                <td>{{ admin.dateInscription | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td class="actions-cell">
+                  <button class="btn-edit">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                    Éditer
+                  </button>
+                  <button class="btn-delete" (click)="onDelete(admin.id)" [disabled]="isDeleting">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6"/>
+                      <path d="M19 6l-1 14H6L5 6"/>
+                      <path d="M10 11v6M14 11v6"/>
+                      <path d="M9 6V4h6v2"/>
+                    </svg>
+                    Supprimer
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- ── Pagination ── -->
+          <div class="pagination" *ngIf="filteredAdmins.length > 0">
+            <span class="page-info">
+              {{ pageStart + 1 }} à {{ pageEnd }} sur {{ filteredAdmins.length }}
+            </span>
+            <div class="page-controls">
+              <button class="page-btn"
+                (click)="goToPage(currentPage - 1)"
+                [disabled]="currentPage === 1">
+                Précédent
+              </button>
+
+              <ng-container *ngFor="let p of pageNumbers">
+                <button class="page-btn"
+                  [class.active]="p === currentPage"
+                  (click)="goToPage(p)">
+                  {{ p }}
+                </button>
+              </ng-container>
+
+              <button class="page-btn"
+                (click)="goToPage(currentPage + 1)"
+                [disabled]="currentPage === totalPages">
+                Suivant ›
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     MODAL 1 — Vérification mot de passe Admin Principal
+═══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" *ngIf="showPasswordModal" (click)="closePasswordModal()">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <div class="modal-header-inner">
+        <div class="modal-header-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </div>
+        <div class="modal-header-text">
+          <h3>Vérification Admin Principal</h3>
+          <span class="modal-header-sub">Confirmation d'identité requise</span>
+        </div>
+      </div>
+      <button class="modal-close" (click)="closePasswordModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <p class="modal-desc">
+        Pour des raisons de sécurité, veuillez confirmer votre identité en saisissant votre mot de passe avant de continuer.
+      </p>
+      <div class="input-group">
+        <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        <input
+          type="password"
+          [(ngModel)]="passwordInput"
+          placeholder="Entrez votre mot de passe"
+          class="modal-input"
+          (keyup.enter)="verifyPrincipalPassword()"
+        />
+      </div>
+      <div class="error-alert" *ngIf="passwordError">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        {{ passwordError }}
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closePasswordModal()">Annuler</button>
+      <button class="btn-confirm" type="button" (click)="verifyPrincipalPassword()" [disabled]="isVerifying">
+        <span *ngIf="isVerifying" class="spinner"></span>
+        <svg *ngIf="!isVerifying" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        {{ isVerifying ? 'Vérification…' : 'Confirmer' }}
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     MODAL 2 — Formulaire ajout admin
+═══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" *ngIf="showAddModal" (click)="closeAddModal()">
+  <div class="modal-box modal-large" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <div class="modal-header-inner">
+        <div class="modal-header-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="8.5" cy="7" r="4"/>
+            <line x1="20" y1="8" x2="20" y2="14"/>
+            <line x1="23" y1="11" x2="17" y2="11"/>
+          </svg>
+        </div>
+        <div class="modal-header-text">
+          <h3>Ajouter un nouvel administrateur</h3>
+          <span class="modal-header-sub">Remplissez les informations du nouveau compte</span>
+        </div>
+      </div>
+      <button class="modal-close" (click)="closeAddModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <form #adminForm="ngForm">
+
+        <!-- Section : Informations personnelles -->
+        <div class="form-section">
+          <div class="form-section-title">Informations personnelles</div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nom <span class="req">*</span></label>
+              <input
+                type="text"
+                name="nom"
+                [(ngModel)]="newAdmin.nom"
+                #nom="ngModel"
+                required
+                class="form-control"
+                placeholder="Ex : Ben Ali"
+              />
+              <span class="field-error" *ngIf="nom.invalid && nom.touched">Le nom est requis</span>
+            </div>
+            <div class="form-group">
+              <label>Prénom <span class="req">*</span></label>
+              <input
+                type="text"
+                name="prenom"
+                [(ngModel)]="newAdmin.prenom"
+                #prenom="ngModel"
+                required
+                class="form-control"
+                placeholder="Ex : Mohamed Amine"
+              />
+              <span class="field-error" *ngIf="prenom.invalid && prenom.touched">Le prénom est requis</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Adresse e-mail <span class="req">*</span></label>
+            <input
+              type="email"
+              name="email"
+              [(ngModel)]="newAdmin.email"
+              #email="ngModel"
+              required
+              email
+              class="form-control"
+              placeholder="Ex : m.benali@clinique-tunis.tn"
+            />
+            <span class="field-error" *ngIf="email.invalid && email.touched">Email invalide ou requis</span>
+          </div>
+
+          <div class="form-group">
+            <label>Téléphone <span class="opt">Optionnel</span></label>
+            <input
+              type="text"
+              name="telephone"
+              [(ngModel)]="newAdmin.telephone"
+              class="form-control"
+              placeholder="Ex : +216 20 123 456"
+            />
+            <span class="field-hint">Format tunisien : +216 XX XXX XXX</span>
+          </div>
+        </div>
+
+        <!-- Section : Rôle & Accès -->
+        <div class="form-section">
+          <div class="form-section-title">Rôle & Accès</div>
+
+          <div class="form-group">
+            <label>Rôle <span class="req">*</span></label>
+            <select
+              name="role"
+              [(ngModel)]="newAdmin.role"
+              #role="ngModel"
+              required
+              class="form-control"
+            >
+              <option value="" disabled>Choisir un rôle…</option>
+              <option value="principal">Admin Principal</option>
+              <option value="sous-admin">Sous Admin</option>
+            </select>
+            <span class="field-error" *ngIf="role.invalid && role.touched">Veuillez sélectionner un rôle</span>
+          </div>
+        </div>
+
+        <!-- Section : Sécurité -->
+        <div class="form-section">
+          <div class="form-section-title">Sécurité</div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Mot de passe <span class="req">*</span></label>
+              <input
+                type="password"
+                name="motDePasse"
+                [(ngModel)]="newAdmin.motDePasse"
+                #motDePasse="ngModel"
+                required
+                minlength="6"
+                class="form-control"
+                placeholder="Min. 6 caractères"
+                (input)="checkPasswords()"
+              />
+              <span class="field-error" *ngIf="motDePasse.invalid && motDePasse.touched">
+                <ng-container *ngIf="motDePasse.errors?.['required']">Requis.</ng-container>
+                <ng-container *ngIf="motDePasse.errors?.['minlength']">Minimum 6 caractères.</ng-container>
+              </span>
+            </div>
+            <div class="form-group">
+              <label>Confirmer le mot de passe <span class="req">*</span></label>
+              <input
+                type="password"
+                name="confirmPassword"
+                [(ngModel)]="confirmPassword"
+                #confirm="ngModel"
+                required
+                class="form-control"
+                placeholder="Répétez le mot de passe"
+                (input)="checkPasswords()"
+              />
+              <span class="field-error" *ngIf="passwordMismatch && confirm.touched">
+                Les mots de passe ne correspondent pas.
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Légende -->
+        <div class="form-legend">
+          <span class="req-star">*</span> Champs obligatoires
+        </div>
+
+        <!-- Alertes -->
+        <div class="success-alert" *ngIf="successMessage">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          {{ successMessage }}
+        </div>
+        <div class="error-alert" *ngIf="errorMessage">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+          </svg>
+          {{ errorMessage }}
+        </div>
+
+      </form>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeAddModal()">Annuler</button>
+      <button
+        class="btn-confirm"
+        type="button"
+        (click)="onSubmit(adminForm)"
+        [disabled]="adminForm.invalid || passwordMismatch || isLoading || !newAdmin.role"
+      >
+        <span *ngIf="isLoading" class="spinner"></span>
+        <svg *ngIf="!isLoading" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        {{ isLoading ? 'Création en cours…' : 'Ajouter l\'administrateur' }}
+      </button>
+    </div>
+
+  </div>
+</div>

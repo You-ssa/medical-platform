@@ -1,9 +1,8 @@
 <!-- Navbar -->
-<nav class="navbar">
+<nav class="navbar" *ngIf="showNavbar">
   <div class="logo">
     <img src="assets/logo.png" alt="Logo Hôpital" />
   </div>
-
   <ul class="nav-links">
     <li>
       <a href="#" class="urgence-link" (click)="openUrgence(); $event.preventDefault()">
@@ -25,9 +24,10 @@
 <router-outlet></router-outlet>
 
 <!-- Footer -->
-<footer class="footer">
+<footer class="footer" *ngIf="showFooter">
   <div class="footer-container">
     <div class="footer-main">
+
       <!-- Colonne 1: Brand -->
       <div class="footer-brand">
         <div class="footer-logo">
@@ -81,7 +81,6 @@
           <li>Monastir, Tunisie</li>
           <li>Disponible 24h/24, 7j/7</li>
         </ul>
-        <!-- Réseaux sociaux -->
         <div class="footer-social">
           <a href="#" aria-label="Facebook">FB</a>
           <a href="#" aria-label="Instagram">IG</a>
@@ -91,16 +90,34 @@
       </div>
     </div>
 
-    <!-- Newsletter -->
+    <!-- Section Avis -->
     <div class="newsletter-section">
       <div class="newsletter-content">
-        <h4 class="newsletter-title">📧 Restez informé de nos actualités santé</h4>
-        <p class="newsletter-description">Recevez nos conseils santé, nos actualités médicales et nos offres exclusives directement dans votre boîte mail.</p>
+        <h4 class="newsletter-title">💬 Donnez-nous votre avis</h4>
+        <p class="newsletter-description">
+          Votre opinion nous aide à améliorer nos services. Partagez votre expérience avec MediConnect.
+        </p>
         <div class="input-group">
-          <input type="email" class="newsletter-input" placeholder="votre@email.fr" required>
-          <button class="newsletter-btn">S'abonner</button>
+          <textarea
+            class="newsletter-input avis-textarea"
+            placeholder="Écrivez votre avis ici…"
+            [(ngModel)]="avisMessage"
+            rows="3"
+            [disabled]="avisEnvoye"
+          ></textarea>
         </div>
-        <p class="privacy-note">En vous inscrivant, vous acceptez notre <a href="#privacy">politique de confidentialité</a></p>
+        <div class="avis-footer-row">
+          <button
+            class="newsletter-btn"
+            (click)="envoyerAvis()"
+            [disabled]="!avisMessage.trim() || avisEnvoi || avisEnvoye"
+          >
+            <span *ngIf="avisEnvoi">Envoi…</span>
+            <span *ngIf="!avisEnvoi">Envoyer</span>
+          </button>
+          <span class="avis-success" *ngIf="avisEnvoye">✅ Merci pour votre avis !</span>
+          <span class="avis-error" *ngIf="avisErreur">❌ Erreur, veuillez réessayer.</span>
+        </div>
       </div>
     </div>
 

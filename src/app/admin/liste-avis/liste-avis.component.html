@@ -1,0 +1,65 @@
+<div class="dashboard-layout">
+  <app-sidebar></app-sidebar>
+  <div class="main-content">
+    <app-header></app-header>
+    <div class="page-content">
+      <div class="admin-page">
+
+        <div class="page-header">
+          <div class="header-left">
+            <div class="page-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+            </div>
+            <h1 class="page-title">Avis des utilisateurs</h1>
+          </div>
+        </div>
+
+        <div *ngIf="isLoading" style="text-align:center; padding:40px; color:#64748b;">
+          Chargement…
+        </div>
+
+        <div *ngIf="erreur" style="color:red; padding:20px;">{{ erreur }}</div>
+
+        <div class="table-card" *ngIf="!isLoading && !erreur">
+          <div class="table-title">Liste des avis ({{ avisList.length }})</div>
+
+          <div *ngIf="avisList.length === 0" class="empty-state">
+            <p>Aucun avis reçu pour le moment.</p>
+          </div>
+
+          <table class="admin-table" *ngIf="avisList.length > 0">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Message</th>
+                <th>Date d'envoi</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let avis of avisList">
+                <td>{{ avis.id }}</td>
+                <td>{{ avis.message }}</td>
+                <td>{{ avis.date_envoi | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td>
+                  <button class="btn-delete" (click)="supprimerAvis(avis.id)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6"/>
+                      <path d="M19 6l-1 14H6L5 6"/>
+                      <path d="M10 11v6M14 11v6"/>
+                      <path d="M9 6V4h6v2"/>
+                    </svg>
+                    Supprimer
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

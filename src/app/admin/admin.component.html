@@ -2,7 +2,6 @@
   <div class="admin-header">
     <h1><i class="fas fa-user-shield"></i> Espace Administrateur</h1>
     <div style="display: flex; gap: 12px;">
-      <!-- 🆕 Bouton pour accéder au nouveau dashboard -->
       <button class="btn-dashboard" routerLink="/admin/dashboard">
         <i class="fas fa-tachometer-alt"></i> Dashboard Complet
       </button>
@@ -11,28 +10,18 @@
       </button>
     </div>
   </div>
-  
-  <!-- Reste du template... -->
-
 
   <!-- Navigation onglets -->
   <div class="admin-tabs">
-    <button 
-      class="tab-btn" 
-      [class.active]="activeTab === 'medecins'"
-      (click)="activeTab = 'medecins'; loadMedecinsEnAttente()">
-      <i class="fas fa-user-md"></i> Médecins en attente
-      <span class="badge" *ngIf="medecinsEnAttente.length > 0">{{ medecinsEnAttente.length }}</span>
-    </button>
-    <button 
-      class="tab-btn" 
+    <button
+      class="tab-btn"
       [class.active]="activeTab === 'secretaires'"
       (click)="activeTab = 'secretaires'; loadSecretairesEnAttente()">
       <i class="fas fa-user-tie"></i> Secrétaires en attente
       <span class="badge" *ngIf="secretairesEnAttente.length > 0">{{ secretairesEnAttente.length }}</span>
     </button>
-    <button 
-      class="tab-btn" 
+    <button
+      class="tab-btn"
       [class.active]="activeTab === 'admins'"
       (click)="activeTab = 'admins'">
       <i class="fas fa-users-cog"></i> Ajouter un admin
@@ -41,52 +30,13 @@
 
   <!-- Contenu selon l'onglet actif -->
   <div class="admin-content">
-    
-    <!-- Section Médecins en attente -->
-    <div *ngIf="activeTab === 'medecins'" class="validation-section">
-      <h2>Médecins en attente de validation</h2>
-      
-      <div *ngIf="medecinsEnAttente.length === 0" class="empty-state">
-        <i class="fas fa-check-circle"></i>
-        <p>Aucun médecin en attente de validation</p>
-      </div>
 
-      <div class="users-grid">
-        <div *ngFor="let medecin of medecinsEnAttente" class="user-card">
-          <div class="user-photo" (click)="showProfilDetail(medecin)">
-            <img [src]="medecin.photoBase64 || 'assets/default-avatar.png'" alt="Photo">
-            <div class="photo-overlay">
-              <i class="fas fa-eye"></i>
-            </div>
-          </div>
-          <div class="user-info">
-            <h3>{{ medecin.prenom }} {{ medecin.nom }}</h3>
-            <p><i class="fas fa-stethoscope"></i> {{ medecin.specialite }}</p>
-            <p><i class="fas fa-id-card"></i> RPPS: {{ medecin.rpps }}</p>
-            <p><i class="fas fa-envelope"></i> {{ medecin.email }}</p>
-            <p><i class="fas fa-phone"></i> {{ medecin.telephone }}</p>
-            <p><i class="fas fa-hospital"></i> {{ medecin.adresseHopital }}</p>
-            <p class="date"><i class="fas fa-calendar"></i> Inscrit le {{ formatDate(medecin.dateInscription) }}</p>
-          </div>
-          <div class="user-actions">
-            <button class="btn-view" (click)="showProfilDetail(medecin)">
-              <i class="fas fa-eye"></i> Voir le profil
-            </button>
-            <button class="btn-approve" (click)="approuverMedecin(medecin.id!)">
-              <i class="fas fa-check"></i> Approuver
-            </button>
-            <button class="btn-reject" (click)="refuserMedecin(medecin.id!)">
-              <i class="fas fa-times"></i> Refuser
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Section Secrétaires en attente -->
+    <!-- ════════════════════════════════════════════════════════
+         Secrétaires en attente
+         ════════════════════════════════════════════════════════ -->
     <div *ngIf="activeTab === 'secretaires'" class="validation-section">
       <h2>Secrétaires en attente de validation</h2>
-      
+
       <div *ngIf="secretairesEnAttente.length === 0" class="empty-state">
         <i class="fas fa-check-circle"></i>
         <p>Aucun(e) secrétaire en attente de validation</p>
@@ -94,12 +44,14 @@
 
       <div class="users-grid">
         <div *ngFor="let secretaire of secretairesEnAttente" class="user-card">
+
           <div class="user-photo" (click)="showProfilDetail(secretaire)">
-            <img [src]="secretaire.photoBase64 || 'assets/default-avatar.png'" alt="Photo">
+            <img [src]="secretaire.photoBase64 || 'assets/patient.png'" alt="Photo">
             <div class="photo-overlay">
               <i class="fas fa-eye"></i>
             </div>
           </div>
+
           <div class="user-info">
             <h3>{{ secretaire.prenom }} {{ secretaire.nom }}</h3>
             <p><i class="fas fa-briefcase"></i> {{ secretaire.poste }}</p>
@@ -107,8 +59,12 @@
             <p><i class="fas fa-envelope"></i> {{ secretaire.email }}</p>
             <p><i class="fas fa-phone"></i> {{ secretaire.telephone }}</p>
             <p><i class="fas fa-hospital"></i> {{ secretaire.adresseHopital }}</p>
-            <p class="date"><i class="fas fa-calendar"></i> Inscrit(e) le {{ formatDate(secretaire.dateInscription) }}</p>
+            <p class="date">
+              <i class="fas fa-calendar"></i>
+              Inscrit(e) le {{ formatDate(secretaire.dateInscription) }}
+            </p>
           </div>
+
           <div class="user-actions">
             <button class="btn-view" (click)="showProfilDetail(secretaire)">
               <i class="fas fa-eye"></i> Voir le profil
@@ -120,87 +76,60 @@
               <i class="fas fa-times"></i> Refuser
             </button>
           </div>
+
         </div>
       </div>
     </div>
 
-    <!-- Section Ajouter un admin -->
+    <!-- ════════════════════════════════════════════════════════
+         Ajouter un admin
+         ════════════════════════════════════════════════════════ -->
     <div *ngIf="activeTab === 'admins'" class="add-admin-section">
       <h2>Ajouter un nouvel administrateur</h2>
-      
+
       <form (ngSubmit)="ajouterAdmin()" class="admin-form">
         <div class="form-row">
           <div class="form-group">
             <label for="adminNom">Nom *</label>
-            <input
-              type="text"
-              id="adminNom"
-              [(ngModel)]="newAdmin.nom"
-              name="adminNom"
-              placeholder="Nom"
-              required>
+            <input type="text" id="adminNom" [(ngModel)]="newAdmin.nom"
+                   name="adminNom" placeholder="Nom" required>
           </div>
-
           <div class="form-group">
             <label for="adminPrenom">Prénom *</label>
-            <input
-              type="text"
-              id="adminPrenom"
-              [(ngModel)]="newAdmin.prenom"
-              name="adminPrenom"
-              placeholder="Prénom"
-              required>
+            <input type="text" id="adminPrenom" [(ngModel)]="newAdmin.prenom"
+                   name="adminPrenom" placeholder="Prénom" required>
           </div>
         </div>
 
         <div class="form-group">
           <label for="adminEmail">Email *</label>
-          <input
-            type="email"
-            id="adminEmail"
-            [(ngModel)]="newAdmin.email"
-            name="adminEmail"
-            placeholder="admin@exemple.com"
-            required>
+          <input type="email" id="adminEmail" [(ngModel)]="newAdmin.email"
+                 name="adminEmail" placeholder="admin@exemple.com" required>
         </div>
 
         <div class="form-group">
           <label for="adminTelephone">Téléphone *</label>
-          <input
-            type="tel"
-            id="adminTelephone"
-            [(ngModel)]="newAdmin.telephone"
-            name="adminTelephone"
-            placeholder="+216 XX XXX XXX"
-            required>
+          <input type="tel" id="adminTelephone" [(ngModel)]="newAdmin.telephone"
+                 name="adminTelephone" placeholder="+216 XX XXX XXX" required>
         </div>
 
         <div class="form-group">
           <label for="adminMotDePasse">Mot de passe *</label>
-          <input
-            type="password"
-            id="adminMotDePasse"
-            [(ngModel)]="newAdmin.motDePasse"
-            name="adminMotDePasse"
-            placeholder="••••••••"
-            required>
+          <input type="password" id="adminMotDePasse" [(ngModel)]="newAdmin.motDePasse"
+                 name="adminMotDePasse" placeholder="••••••••" required>
         </div>
 
         <div class="form-group">
           <label for="adminConfMotDePasse">Confirmer mot de passe *</label>
-          <input
-            type="password"
-            id="adminConfMotDePasse"
-            [(ngModel)]="newAdmin.confMotDePasse"
-            name="adminConfMotDePasse"
-            placeholder="••••••••"
-            required>
-          <small class="error-text" *ngIf="newAdmin.motDePasse && newAdmin.confMotDePasse && newAdmin.motDePasse !== newAdmin.confMotDePasse">
+          <input type="password" id="adminConfMotDePasse" [(ngModel)]="newAdmin.confMotDePasse"
+                 name="adminConfMotDePasse" placeholder="••••••••" required>
+          <small class="error-text"
+            *ngIf="newAdmin.motDePasse && newAdmin.confMotDePasse &&
+                   newAdmin.motDePasse !== newAdmin.confMotDePasse">
             <i class="fas fa-exclamation-triangle"></i> Les mots de passe ne correspondent pas
           </small>
         </div>
 
-        <!-- Messages -->
         <div class="error-message" *ngIf="errorMessage">
           <i class="fas fa-exclamation-circle"></i> {{ errorMessage }}
         </div>
@@ -209,10 +138,7 @@
           <i class="fas fa-check-circle"></i> {{ successMessage }}
         </div>
 
-        <button 
-          type="submit" 
-          class="btn-primary"
-          [disabled]="isLoading">
+        <button type="submit" class="btn-primary" [disabled]="isLoading">
           <span *ngIf="!isLoading">
             <i class="fas fa-user-plus"></i> Créer l'administrateur
           </span>
@@ -226,7 +152,7 @@
   </div>
 </div>
 
-<!-- Modal Profil Détaillé -->
+<!-- Modal Profil Détaillé (secrétaire) -->
 <app-profil-detail
   *ngIf="selectedUser"
   [user]="selectedUser"

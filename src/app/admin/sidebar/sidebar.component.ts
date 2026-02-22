@@ -14,43 +14,67 @@ import { Router, RouterModule } from '@angular/router';
       </div>
 
       <nav class="sidebar-nav">
-        <a routerLink="/admin/dashboard" routerLinkActive="active" class="nav-item">
-          <i class="fas fa-th-large"></i>
-          <span>Tableau de Bord</span>
-        </a>
+  <a routerLink="/admin/dashboard" routerLinkActive="active" class="nav-item">
+    <i class="fas fa-th-large"></i>
+    <span>Tableau de Bord</span>
+  </a>
 
-        <a routerLink="/admin/gestion-patients" routerLinkActive="active" class="nav-item">
-          <i class="fas fa-users"></i>
-          <span>Gestion des Patients</span>
-        </a>
+  <a routerLink="/admin/gestion-patients" routerLinkActive="active" class="nav-item">
+    <i class="fas fa-users"></i>
+    <span>Gestion des Patients</span>
+  </a>
 
-        <a routerLink="/admin/gestion-medecins" routerLinkActive="active" class="nav-item">
-          <i class="fas fa-user-md"></i>
-          <span>Gestion des Médecins</span>
-        </a>
+  <a routerLink="/admin/gestion-medecins" routerLinkActive="active" class="nav-item">
+    <i class="fas fa-user-md"></i>
+    <span>Gestion des Médecins</span>
+  </a>
 
-        <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-item">
-          <i class="fas fa-user-check"></i>
-          <span>Administration CHU</span>
-        </a>
+  <!-- ✅ Gestion Secrétaire -->
+  <a routerLink="/admin/gestion-secretaires" routerLinkActive="active" class="nav-item">
+  <i class="fas fa-user-tie"></i>
+  <span>Gestion des Secrétaires</span>
+</a>
 
-        <a routerLink="/admin/notifications" routerLinkActive="active" class="nav-item">
-          <i class="fas fa-bell"></i>
-          <span>Notifications</span>
-          <span class="badge" *ngIf="notificationCount > 0">{{notificationCount}}</span>
-        </a>
+  <!-- ✅ Gestion Sous Admin -->
+  <a routerLink="/admin/gestion-sousadmin" routerLinkActive="active" class="nav-item">
+    <i class="fas fa-user-shield"></i>
+    <span>Gestion Sous-Admin</span>
+  </a>
 
-        <a routerLink="/admin/consultations" routerLinkActive="active" class="nav-item">
-          <i class="fas fa-calendar-check"></i>
-          <span>Consultations</span>
-        </a>
+  <a routerLink="/admin" routerLinkActive="active" 
+     [routerLinkActiveOptions]="{exact: true}" 
+     class="nav-item">
+    <i class="fas fa-user-check"></i>
+    <span>Administration CHU</span>
+  </a>
 
-        <div class="nav-item expandable" [class.expanded]="dossiersExpanded" (click)="dossiersExpanded = !dossiersExpanded">
-          <i class="fas fa-folder-open"></i>
-          <span>Dossiers Médicaux</span>
-          <i class="fas fa-chevron-down expand-icon"></i>
-        </div>
-      </nav>
+  <a routerLink="/admin/notifications" routerLinkActive="active" class="nav-item">
+    <i class="fas fa-bell"></i>
+    <span>Notifications</span>
+    <span class="badge" *ngIf="notificationCount > 0">
+      {{notificationCount}}
+    </span>
+  </a>
+
+  <a routerLink="/admin/consultations" routerLinkActive="active" class="nav-item">
+    <i class="fas fa-calendar-check"></i>
+    <span>Consultations</span>
+  </a>
+
+  <!-- ✅ Liste des Avis -->
+  <a routerLink="/admin/liste-avis" routerLinkActive="active" class="nav-item">
+    <i class="fas fa-star"></i>
+    <span>Liste des Avis</span>
+  </a>
+
+  <div class="nav-item expandable" 
+       [class.expanded]="dossiersExpanded" 
+       (click)="dossiersExpanded = !dossiersExpanded">
+    <i class="fas fa-folder-open"></i>
+    <span>Dossiers Médicaux</span>
+    <i class="fas fa-chevron-down expand-icon"></i>
+  </div>
+</nav>
     </aside>
   `,
   styles: [`

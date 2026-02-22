@@ -77,7 +77,7 @@
               <!-- ✅ Liste des patients -->
               <div *ngIf="!loading" class="user-list">
                 <div *ngFor="let patient of recentPatients" class="user-item">
-                  <img [src]="patient.photoBase64 || 'assets/default-avatar.png'" alt="Photo" class="user-photo">
+                  <img [src]="patient.photoBase64 || 'assets/patient.png'" alt="Photo" class="user-photo">
                   <div class="user-details">
                     <p class="user-name">{{patient.prenom}} {{patient.nom}}</p>
                     <p class="user-id">Dossier #{{patient.id?.substring(0, 4)}}</p>

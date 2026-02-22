@@ -145,7 +145,7 @@ import { Router } from '@angular/router';
 })
 export class HeaderComponent implements OnInit {
   showDropdown = false;
-  adminPhoto = 'assets/default-avatar.png';
+  adminPhoto = 'assets/admin.png';
 
   constructor(private router: Router) {}
 

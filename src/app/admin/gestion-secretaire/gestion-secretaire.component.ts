@@ -11,34 +11,34 @@ import { UserService, User } from '../../services/user.service';
 const DEFAULT_AVATAR = `data:image/svg+xml;charset=UTF-8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><circle cx='60' cy='60' r='60' fill='%23e8edf5'/><circle cx='60' cy='45' r='22' fill='%23b0bec5'/><ellipse cx='60' cy='105' rx='34' ry='24' fill='%23b0bec5'/></svg>`;
 
 @Component({
-  selector: 'app-gestion-medecins',
+  selector: 'app-gestion-secretaires',
   standalone: true,
   imports: [CommonModule, FormsModule, SidebarComponent, HeaderComponent, ProfilDetailComponent],
-  templateUrl: './gestion-medecins.component.html',
-  styleUrls: ['./gestion-medecins.component.css']
+  templateUrl: './gestion-secretaire.component.html',
+  styleUrls: ['./gestion-secretaire.component.css']
 })
-export class GestionMedecinsComponent implements OnInit {
+export class GestionSecretairesComponent implements OnInit {
 
   activeTab: 'approuves' | 'en_attente' = 'en_attente';
 
-  // ── Médecins approuvés ────────────────────────────────────
-  medecins: any[]         = [];
-  filteredMedecins: any[] = [];
+  // ── Secrétaires approuvé(e)s ──────────────────────────────
+  secretaires: any[]         = [];
+  filteredSecretaires: any[] = [];
   searchTerm       = '';
-  filterSpecialite = '';
+  filterDepartement = '';
   loading          = false;
-  selectedMedecin: any = null;
+  selectedSecretaire: any = null;
 
-  // ── Médecins en attente ───────────────────────────────────
-  medecinsEnAttente: User[] = [];
+  // ── Secrétaires en attente ────────────────────────────────
+  secretairesEnAttente: User[] = [];
   loadingEnAttente  = false;
   errorEnAttente    = '';
   selectedUserProfil: User | null = null;
 
-  specialites: string[] = [
+  departements: string[] = [
     'Cardiologie', 'Pédiatrie', 'Neurologie', 'Dermatologie',
     'Orthopédie', 'Ophtalmologie', 'ORL', 'Psychiatrie',
-    'Radiologie', 'Urgences'
+    'Radiologie', 'Urgences', 'Administration', 'Chirurgie'
   ];
 
   constructor(
@@ -48,8 +48,8 @@ export class GestionMedecinsComponent implements OnInit {
 
   async ngOnInit() {
     await Promise.all([
-      this.loadMedecins(),
-      this.loadMedecinsEnAttente()
+      this.loadSecretaires(),
+      this.loadSecretairesEnAttente()
     ]);
   }
 
@@ -61,72 +61,71 @@ export class GestionMedecinsComponent implements OnInit {
     if (!photoBase64 || photoBase64.trim().length < 10) {
       return DEFAULT_AVATAR;
     }
-    // Le backend envoie déjà un data URL complet (data:image/...)
     if (photoBase64.startsWith('data:image')) {
       return photoBase64;
     }
-    // Sécurité : si base64 brut sans préfixe
     return `data:image/jpeg;base64,${photoBase64}`;
   }
 
   // ════════════════════════════════════════════════════════════
-  // Médecins approuvés — GET /api/medecins-approuves
+  // Secrétaires approuvé(e)s — GET /api/secretaires-approuves
   // ════════════════════════════════════════════════════════════
 
-  async loadMedecins() {
+  async loadSecretaires() {
     try {
       this.loading = true;
-      this.medecins         = await this.statsService.getMedecinsList();
-      this.filteredMedecins = [...this.medecins];
+      this.secretaires         = await this.statsService.getSecretairesList();
+      this.filteredSecretaires = [...this.secretaires];
     } catch (error) {
-      console.error('Erreur chargement médecins:', error);
-      this.medecins = this.filteredMedecins = [];
+      console.error('Erreur chargement secrétaires:', error);
+      this.secretaires = this.filteredSecretaires = [];
     } finally {
       this.loading = false;
     }
   }
 
-  searchMedecins()     { this.applyFilters(); }
-  filterBySpecialite() { this.applyFilters(); }
+  searchSecretaires()     { this.applyFilters(); }
+  filterByDepartement()   { this.applyFilters(); }
 
   applyFilters() {
-    let result = [...this.medecins];
+    let result = [...this.secretaires];
     if (this.searchTerm) {
       const term = this.searchTerm.toLowerCase();
-      result = result.filter(m =>
-        m.nom?.toLowerCase().includes(term)        ||
-        m.prenom?.toLowerCase().includes(term)     ||
-        m.email?.toLowerCase().includes(term)      ||
-        m.specialite?.toLowerCase().includes(term)
+      result = result.filter(s =>
+        s.nom?.toLowerCase().includes(term)          ||
+        s.prenom?.toLowerCase().includes(term)       ||
+        s.email?.toLowerCase().includes(term)        ||
+        s.poste?.toLowerCase().includes(term)        ||
+        s.departement?.toLowerCase().includes(term)
       );
     }
-    if (this.filterSpecialite) {
-      result = result.filter(m => m.specialite === this.filterSpecialite);
+    if (this.filterDepartement) {
+      result = result.filter(s => s.departement === this.filterDepartement);
     }
-    this.filteredMedecins = result;
+    this.filteredSecretaires = result;
   }
 
-  getSpecialiteCount(s: string): number {
-    return this.medecins.filter(m => m.specialite === s).length;
+  getDepartementCount(d: string): number {
+    return this.secretaires.filter(s => s.departement === d).length;
   }
 
-  viewMedecin(medecin: any) {
-    this.selectedMedecin = medecin;
+  viewSecretaire(secretaire: any) {
+    this.selectedSecretaire = secretaire;
     document.body.style.overflow = 'hidden';
   }
 
-  closeMedecinDetail() {
-    this.selectedMedecin = null;
+  closeSecretaireDetail() {
+    this.selectedSecretaire = null;
     document.body.style.overflow = 'auto';
   }
 
-  async deleteMedecin(id: string) {
-    if (!id) { alert('Identifiant du médecin introuvable'); return; }
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce médecin ?')) return;
+  async deleteSecretaire(id: string) {
+    if (!id) { alert('Identifiant du/de la secrétaire introuvable'); return; }
+    if (!confirm('Êtes-vous sûr de vouloir supprimer ce/cette secrétaire ?')) return;
     try {
-      await this.userService.refuserUtilisateur(id, 'medecin');
-      await this.loadMedecins();
-      alert('Médecin supprimé avec succès');
+      await this.userService.refuserUtilisateur(id, 'secretaire');
+      await this.loadSecretaires();
+      alert('Secrétaire supprimé(e) avec succès');
     } catch (error) {
       console.error('Erreur suppression:', error);
       alert('Erreur lors de la suppression');
@@ -134,18 +133,18 @@ export class GestionMedecinsComponent implements OnInit {
   }
 
   // ════════════════════════════════════════════════════════════
-  // Médecins en attente — GET /api/utilisateurs-en-attente/medecin
+  // Secrétaires en attente — GET /api/utilisateurs-en-attente/secretaire
   // ════════════════════════════════════════════════════════════
 
-  async loadMedecinsEnAttente() {
+  async loadSecretairesEnAttente() {
     try {
       this.loadingEnAttente = true;
       this.errorEnAttente   = '';
-      this.medecinsEnAttente = await this.userService.getUtilisateursEnAttente('medecin');
+      this.secretairesEnAttente = await this.userService.getUtilisateursEnAttente('secretaire');
     } catch (error: any) {
-      console.error('Erreur chargement médecins en attente:', error);
-      this.errorEnAttente    = 'Impossible de charger les demandes en attente.';
-      this.medecinsEnAttente = [];
+      console.error('Erreur chargement secrétaires en attente:', error);
+      this.errorEnAttente       = 'Impossible de charger les demandes en attente.';
+      this.secretairesEnAttente = [];
     } finally {
       this.loadingEnAttente = false;
     }
@@ -163,35 +162,35 @@ export class GestionMedecinsComponent implements OnInit {
 
   async handleApprove(user: User) {
     if (!user.id) return;
-    await this.approuverMedecin(user.id);
+    await this.approuverSecretaire(user.id);
     this.closeProfilDetail();
   }
 
   async handleReject(user: User) {
     if (!user.id) return;
-    await this.refuserMedecin(user.id);
+    await this.refuserSecretaire(user.id);
     this.closeProfilDetail();
   }
 
-  async approuverMedecin(id: string) {
-    if (!id) { alert('ID du médecin invalide'); return; }
+  async approuverSecretaire(id: string) {
+    if (!id) { alert('ID du/de la secrétaire invalide'); return; }
     try {
-      await this.userService.approuverUtilisateur(id, 'medecin');
-      await Promise.all([this.loadMedecinsEnAttente(), this.loadMedecins()]);
-      alert('Médecin approuvé avec succès !');
+      await this.userService.approuverUtilisateur(id, 'secretaire');
+      await Promise.all([this.loadSecretairesEnAttente(), this.loadSecretaires()]);
+      alert('Secrétaire approuvé(e) avec succès !');
     } catch (error) {
       console.error('Erreur approbation:', error);
       alert("Erreur lors de l'approbation.");
     }
   }
 
-  async refuserMedecin(id: string) {
-    if (!id) { alert('ID du médecin invalide'); return; }
-    if (!confirm('Êtes-vous sûr de vouloir refuser ce médecin ?')) return;
+  async refuserSecretaire(id: string) {
+    if (!id) { alert('ID du/de la secrétaire invalide'); return; }
+    if (!confirm('Êtes-vous sûr de vouloir refuser ce/cette secrétaire ?')) return;
     try {
-      await this.userService.refuserUtilisateur(id, 'medecin');
-      await this.loadMedecinsEnAttente();
-      alert('Médecin refusé.');
+      await this.userService.refuserUtilisateur(id, 'secretaire');
+      await this.loadSecretairesEnAttente();
+      alert('Secrétaire refusé(e).');
     } catch (error) {
       console.error('Erreur refus:', error);
       alert('Erreur lors du refus.');

@@ -82,7 +82,7 @@
           <tbody>
             <tr *ngFor="let patient of filteredPatients" class="table-row">
               <td>
-                <img [src]="patient.photoBase64 || 'assets/default-avatar.png'" 
+                <img [src]="patient.photoBase64 || 'assets/patient.png'" 
                      alt="Photo" 
                      class="table-photo">
               </td>
@@ -140,7 +140,7 @@
     <div class="modal-body">
       <div class="patient-detail-grid">
         <div class="detail-section">
-          <img [src]="selectedPatient.photoBase64 || 'assets/default-avatar.png'" 
+          <img [src]="selectedPatient.photoBase64 || 'assets/patient.png'" 
                alt="Photo" 
                class="detail-photo">
           <h3>{{selectedPatient.prenom}} {{selectedPatient.nom}}</h3>

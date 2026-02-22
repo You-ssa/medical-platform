@@ -9,7 +9,7 @@ import { UserService, User } from '../services/user.service';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './init-admin.component.html',
-  styleUrls: ['./init-admin.component.css'] // <-- corrigé
+  styleUrls: ['./init-admin.component.css']
 })
 export class InitAdminComponent implements OnInit {
   adminExists = false;
@@ -57,6 +57,7 @@ export class InitAdminComponent implements OnInit {
         telephone: this.adminTelephone,
         motDePasse: this.adminPassword,
         userType: 'admin',
+        role: 'principal',  // ← on ajoute le rôle principal
         dateInscription: new Date().toISOString()
       };
 

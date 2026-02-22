@@ -17,7 +17,14 @@ export class PaysService {
   constructor() {}
 
   /**
-   * Retourne la liste des pays (cache en mémoire).
+   * Précharge les pays au démarrage (utilisé par l'initialiseur Firebase).
+   */
+  async initializePays(): Promise<void> {
+    await this.getPays();
+  }
+
+  /**
+   * Retourne la liste des pays (cache mémoire).
    */
   async getPays(): Promise<Pays[]> {
     if (this.paysCache.length > 0) {

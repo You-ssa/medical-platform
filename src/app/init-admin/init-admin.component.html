@@ -1,15 +1,12 @@
-<p>init-admin works!</p>
 <div class="init-container">
   <div class="init-card">
     <h2>🔐 Initialisation Administrateur</h2>
-    
-    <!-- Message: Aucun admin n'existe -->
+
     <div *ngIf="!adminExists && !created" class="warning">
       <i class="fas fa-exclamation-triangle"></i>
       Aucun administrateur n'existe. Créez le premier admin.
     </div>
 
-    <!-- Message: Admin existe déjà -->
     <div *ngIf="adminExists && !created" class="success">
       <i class="fas fa-check-circle"></i>
       <p>Un administrateur existe déjà.</p>
@@ -19,7 +16,6 @@
       </a>
     </div>
 
-    <!-- Message: Admin créé avec succès -->
     <div *ngIf="created" class="success">
       <i class="fas fa-check-circle"></i>
       <h3>✅ Administrateur créé avec succès !</h3>
@@ -27,6 +23,7 @@
       <div class="credentials">
         <p><strong>📧 Email:</strong> <code>{{ adminEmail }}</code></p>
         <p><strong>🔑 Mot de passe:</strong> <code>{{ adminPassword }}</code></p>
+        <p><strong>🛡️ Rôle:</strong> <code>Principal</code></p>
       </div>
       <br>
       <p class="warning-text">
@@ -39,63 +36,31 @@
       </a>
     </div>
 
-    <!-- Formulaire de création -->
     <form *ngIf="!adminExists && !created" (ngSubmit)="createFirstAdmin()">
       <div class="form-group">
         <label for="nom">Nom *</label>
-        <input
-          type="text"
-          id="nom"
-          [(ngModel)]="adminNom"
-          name="nom"
-          placeholder="Admin"
-          required>
+        <input type="text" id="nom" [(ngModel)]="adminNom" name="nom" placeholder="Admin" required>
       </div>
 
       <div class="form-group">
         <label for="prenom">Prénom *</label>
-        <input
-          type="text"
-          id="prenom"
-          [(ngModel)]="adminPrenom"
-          name="prenom"
-          placeholder="Principal"
-          required>
+        <input type="text" id="prenom" [(ngModel)]="adminPrenom" name="prenom" placeholder="Principal" required>
       </div>
 
       <div class="form-group">
         <label for="email">Email *</label>
-        <input
-          type="email"
-          id="email"
-          [(ngModel)]="adminEmail"
-          name="email"
-          placeholder="admin@exemple.com"
-          required>
+        <input type="email" id="email" [(ngModel)]="adminEmail" name="email" placeholder="admin@exemple.com" required>
       </div>
+
       <div class="form-group">
-  <label for="telephone">Téléphone</label>
-  <input
-    type="text"
-    id="telephone"
-    [(ngModel)]="adminTelephone"
-    name="telephone"
-    placeholder="+216 00 000 000">
-</div>
+        <label for="telephone">Téléphone</label>
+        <input type="text" id="telephone" [(ngModel)]="adminTelephone" name="telephone" placeholder="+216 00 000 000">
+      </div>
 
       <div class="form-group">
         <label for="password">Mot de passe *</label>
-        <input
-          type="password"
-          id="password"
-          [(ngModel)]="adminPassword"
-          name="password"
-          placeholder="Minimum 6 caractères"
-          minlength="6"
-          required>
-        <small class="help-text">
-          <i class="fas fa-info-circle"></i> Minimum 6 caractères
-        </small>
+        <input type="password" id="password" [(ngModel)]="adminPassword" name="password" placeholder="Minimum 6 caractères" minlength="6" required>
+        <small class="help-text"><i class="fas fa-info-circle"></i> Minimum 6 caractères</small>
       </div>
 
       <button type="submit" class="btn-primary">
