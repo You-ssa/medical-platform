@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { firstValueFrom, throwError } from 'rxjs';
+import { firstValueFrom, throwError, Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
@@ -20,10 +20,16 @@ export interface User {
   ville?: string;
   rpps?: string;
   specialite?: string;
+  specialite_id?: number;
   adresseHopital?: string;
   statut?: 'en_attente' | 'approuve' | 'refuse';
   poste?: string;
   departement?: string;
+}
+
+export interface Specialite {
+  id: number;
+  nom: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -32,6 +38,7 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
+  // ── Création utilisateurs ─────────────────────────────────────
   async createPatient(user: User, photoFile?: File): Promise<User> {
     return firstValueFrom(
       this.http
@@ -56,29 +63,23 @@ export class UserService {
     );
   }
 
-  // ── Inscription admin ────────────────────────────────────────
-  // Payload explicite pour garantir que role est toujours envoyé
   async createAdmin(user: User): Promise<User> {
     const payload = {
-      nom:        user.nom,
-      prenom:     user.prenom,
-      email:      user.email,
+      nom: user.nom,
+      prenom: user.prenom,
+      email: user.email,
       motDePasse: user.motDePasse,
-      telephone:  user.telephone || '',
-      role:       user.role ?? 'sous-admin'  // ✅ jamais undefined
+      telephone: user.telephone || '',
+      role: user.role ?? 'sous-admin'
     };
-    console.log('📤 createAdmin payload:', payload);
     return firstValueFrom(
       this.http
-        .post<User>(
-          `${this.apiUrl}/api/register/admin`,
-          payload,
-          { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) }
-        )
+        .post<User>(`${this.apiUrl}/api/register/admin`, payload, { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) })
         .pipe(catchError(this.handleError('Erreur création admin')))
     );
   }
 
+  // ── Connexion et vérification email ───────────────────────────
   async emailExists(email: string, userType: string): Promise<boolean> {
     const encodedEmail = encodeURIComponent(email);
     return firstValueFrom(
@@ -91,24 +92,15 @@ export class UserService {
     );
   }
 
-  // ── Connexion — stocke l'admin en localStorage après login réussi
   async login(email: string, motDePasse: string, userType: string): Promise<User | null> {
     return firstValueFrom(
       this.http
-        .post<User | { user: User; token?: string }>(
-          `${this.apiUrl}/api/login`,
-          { email, motDePasse, userType },
-          { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) }
-        )
+        .post<User | { user: User; token?: string }>(`${this.apiUrl}/api/login`, { email, motDePasse, userType }, { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) })
         .pipe(
           map(res => {
             const user = (res as any)?.user ?? (res as User);
-            // ✅ Stocker l'admin connecté en localStorage pour la vérification de mot de passe
             if (user && userType === 'admin') {
-              localStorage.setItem('currentAdmin', JSON.stringify({
-                id:   user.id,
-                role: user.role
-              }));
+              localStorage.setItem('currentAdmin', JSON.stringify({ id: user.id, role: user.role }));
             }
             return user;
           }),
@@ -117,6 +109,7 @@ export class UserService {
     );
   }
 
+  // ── Gestion utilisateurs ──────────────────────────────────────
   async getUtilisateursEnAttente(userType: 'medecin' | 'secretaire'): Promise<User[]> {
     return firstValueFrom(
       this.http
@@ -144,7 +137,6 @@ export class UserService {
     );
   }
 
-  // ── Vérifie si un admin PRINCIPAL existe (utilisé par init-admin)
   async adminExists(): Promise<boolean> {
     return firstValueFrom(
       this.http
@@ -161,23 +153,87 @@ export class UserService {
     return await response.json();
   }
 
+  // ── Récupération des spécialités ─────────────────────────────
+  getSpecialites(): Observable<Specialite[]> {
+    return this.http.get<Specialite[]>(`${this.apiUrl}/api/specialites`)
+      .pipe(
+        map(data => data || []),
+        catchError(err => throwError(() => new Error('Erreur chargement spécialités')))
+      );
+  }
+
+  // ── IMPORT / EXPORT POUR LES MÉDECINS ────────────────────────
+  /**
+   * Importe un fichier (CSV, Excel) contenant des médecins.
+   * @param file Le fichier à uploader
+   * @param statut Le statut à appliquer aux médecins importés ('en_attente' ou 'approuve')
+   */
+  importMedecins(file: File, statut: 'en_attente' | 'approuve' = 'en_attente'): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('statut', statut);
+    return this.http.post(`${this.apiUrl}/api/medecins/import`, formData)
+      .pipe(
+        catchError(this.handleError('Erreur lors de l\'import des médecins'))
+      );
+  }
+
+  /**
+   * Exporte les médecins selon leur statut
+   * @param statut Le statut des médecins à exporter ('en_attente' ou 'approuve')
+   */
+  exportMedecins(statut: 'en_attente' | 'approuve' = 'approuve'): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/api/medecins/export?statut=${statut}`, {
+      responseType: 'blob'
+    }).pipe(
+      catchError(this.handleError('Erreur lors de l\'export des médecins'))
+    );
+  }
+
+  // ── IMPORT / EXPORT POUR LES SECRÉTAIRES ─────────────────────
+  /**
+   * Importe un fichier (CSV, Excel) contenant des secrétaires.
+   * @param file Le fichier à uploader
+   * @param statut Le statut à appliquer aux secrétaires importées ('en_attente' ou 'approuve')
+   */
+  importSecretaires(file: File, statut: 'en_attente' | 'approuve' = 'en_attente'): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('statut', statut);
+    return this.http.post(`${this.apiUrl}/api/secretaires/import`, formData)
+      .pipe(
+        catchError(this.handleError('Erreur lors de l\'import des secrétaires'))
+      );
+  }
+
+  /**
+   * Exporte les secrétaires selon leur statut
+   * @param statut Le statut des secrétaires à exporter ('en_attente' ou 'approuve')
+   */
+  exportSecretaires(statut: 'en_attente' | 'approuve' = 'approuve'): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/api/secretaires/export?statut=${statut}`, {
+      responseType: 'blob'
+    }).pipe(
+      catchError(this.handleError('Erreur lors de l\'export des secrétaires'))
+    );
+  }
+
+  // ── Méthodes internes ───────────────────────────────────────
   private normalizeUser(raw: any, userType: 'medecin' | 'secretaire'): User {
     return {
       ...raw,
-      id:              String(raw.id),
+      id: String(raw.id),
       userType,
-      adresseHopital:  raw.adresseHopital  ?? raw.adresse_hopital,
+      adresseHopital: raw.adresseHopital ?? raw.adresse_hopital,
       dateInscription: raw.dateInscription ?? raw.date_inscription,
-      photoBase64:     raw.photoBase64     ?? raw.photo_base64,
+      photoBase64: raw.photoBase64 ?? raw.photo_base64
     };
   }
 
   private buildFormData(user: User, photoFile?: File): FormData {
     const formData = new FormData();
     Object.entries(user).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        formData.append(key, String(value));
-      }
+      if (value !== undefined && value !== null) formData.append(key, String(value));
     });
     if (photoFile) formData.append('photo', photoFile);
     return formData;

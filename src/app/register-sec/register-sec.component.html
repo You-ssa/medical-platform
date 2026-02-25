@@ -52,8 +52,7 @@
         </div>
       </div>
 
-      <!-- Étape 2 : Email + Téléphone + Numéro identité (optionnel) -->
-            <!-- Étape 2 : Email + Téléphone + Adresse hôpital -->
+      <!-- Étape 2 : Email + Téléphone + Adresse hôpital -->
       <div *ngIf="currentStep === 2" class="step">
         <div class="form-group">
           <label for="email">Email *</label>
@@ -76,13 +75,15 @@
         </div>
       </div>
 
-      <!-- Étape 3 : Spécialité + Poste + Département -->
+      <!-- Étape 3 : Spécialité (depuis la base) + Poste + Département -->
       <div *ngIf="currentStep === 3" class="step">
         <div class="form-group">
           <label for="specialite">Spécialité *</label>
-          <select id="specialite" [(ngModel)]="specialite" name="specialite" required>
-            <option value="">Sélectionner une spécialité</option>
-            <option *ngFor="let spec of specialites" [value]="spec">{{ spec }}</option>
+          <select id="specialite" [(ngModel)]="specialite_id" name="specialite_id" required>
+            <option [ngValue]="null">Sélectionner une spécialité</option>
+            <option *ngFor="let spec of specialites" [ngValue]="spec.id">
+              {{ spec.nom }}
+            </option>
           </select>
         </div>
 
@@ -110,7 +111,7 @@
         </div>
       </div>
 
-            <!-- Étape 4 : Mot de passe + Confirmation + Checkbox -->
+      <!-- Étape 4 : Mot de passe + Confirmation + Checkbox -->
       <div *ngIf="currentStep === 4" class="step">
         <div class="form-group">
           <label for="motDePasse">Mot de passe *</label>

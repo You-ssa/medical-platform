@@ -40,7 +40,10 @@ import { Router, RouterModule } from '@angular/router';
     <i class="fas fa-user-shield"></i>
     <span>Gestion Sous-Admin</span>
   </a>
-
+  <a routerLink="/admin/liste-avis" routerLinkActive="active" class="nav-item">
+    <i class="fas fa-star"></i>
+    <span>Liste des Avis</span>
+  </a>
   <a routerLink="/admin" routerLinkActive="active" 
      [routerLinkActiveOptions]="{exact: true}" 
      class="nav-item">
@@ -62,10 +65,7 @@ import { Router, RouterModule } from '@angular/router';
   </a>
 
   <!-- ✅ Liste des Avis -->
-  <a routerLink="/admin/liste-avis" routerLinkActive="active" class="nav-item">
-    <i class="fas fa-star"></i>
-    <span>Liste des Avis</span>
-  </a>
+  
 
   <div class="nav-item expandable" 
        [class.expanded]="dossiersExpanded" 

@@ -1,7 +1,7 @@
 <div class="auth-container">
   <div class="auth-card">
 
-    <!-- Tabs -->
+    <!-- Tabs de sélection du type d'utilisateur -->
     <div class="user-type-tabs">
       <button class="tab-btn" (click)="goToRegisterPatient()">
         <i class="fas fa-user"></i> Patient
@@ -18,7 +18,7 @@
 
     <form (ngSubmit)="registerMed()">
 
-      <!-- Étape 1 : Photo + Nom/Prénom + Sexe -->
+      <!-- Étape 1 : Photo + Nom + Prénom + Sexe -->
       <div *ngIf="currentStep === 1" class="step">
         <div class="photo-circle" (click)="photoInput.click()">
           <img *ngIf="photoPreview" [src]="photoPreview" alt="Photo">
@@ -48,7 +48,7 @@
         </div>
 
         <div class="step-buttons">
-          <button type="button" (click)="nextStep()">Suivant …</button>
+          <button type="button" (click)="nextStep()">Suivant →</button>
         </div>
       </div>
 
@@ -71,19 +71,21 @@
 
         <div class="form-group">
           <label for="specialite">Spécialité *</label>
-          <select id="specialite" [(ngModel)]="specialite" name="specialite" required>
+          <select id="specialite" [(ngModel)]="specialite_id" name="specialite_id" required>
             <option value="">Sélectionner une spécialité</option>
-            <option *ngFor="let spec of specialites" [value]="spec">{{ spec }}</option>
+            <option *ngFor="let spec of specialites" [value]="spec.id">
+              {{ spec.nom }}
+            </option>
           </select>
         </div>
 
         <div class="step-buttons">
-          <button type="button" (click)="prevStep()">… Retour</button>
-          <button type="button" (click)="nextStep()">Suivant …</button>
+          <button type="button" (click)="prevStep()">← Retour</button>
+          <button type="button" (click)="nextStep()">Suivant →</button>
         </div>
       </div>
 
-      <!-- Étape 3 : Adresse + Mot de passe + Confirmation + Checkbox -->
+      <!-- Étape 3 : Adresse hôpital + Mot de passe + Confirmation + Conditions -->
       <div *ngIf="currentStep === 3" class="step">
         <div class="form-group">
           <label for="adresseHopital">Adresse hôpital / cabinet *</label>
@@ -108,17 +110,17 @@
         </div>
 
         <div class="step-buttons">
-          <button type="button" (click)="prevStep()">… Retour</button>
-          <button type="submit">Créer mon compte</button>
+          <button type="button" (click)="prevStep()">← Retour</button>
+          <button type="submit" [disabled]="isLoading">Créer mon compte</button>
         </div>
       </div>
 
-      <!-- Points de progression -->
+      <!-- Indicateur de progression -->
       <div class="step-indicator">
         <span *ngFor="let step of [].constructor(totalSteps); let i = index" [class.active]="i+1 === currentStep"></span>
       </div>
 
-      <!-- Messages -->
+      <!-- Messages d'erreur / succès -->
       <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
       <div class="success-message" *ngIf="successMessage">{{ successMessage }}</div>
 

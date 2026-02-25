@@ -9,7 +9,7 @@
     <!-- En-tête du profil -->
     <div class="profil-header">
       <div class="profil-photo-large">
-        <img [src]="user.photoBase64 || 'assets/patient.png'" alt="Photo de profil">
+        <img [src]="getPhotoSrc(user.photoBase64)" alt="Photo de profil">
       </div>
       <h2>{{ user.prenom }} {{ user.nom }}</h2>
       <p class="profil-type">
@@ -58,7 +58,7 @@
       <div class="info-grid">
         <div class="info-item">
           <label><i class="fas fa-stethoscope"></i> Spécialité</label>
-          <p>{{ user.specialite }}</p>
+          <p>{{ user.specialite || '—' }}</p>
         </div>
 
         <div class="info-item">

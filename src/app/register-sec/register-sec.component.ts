@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
@@ -11,14 +11,14 @@ import { UserService, User } from '../services/user.service';
   templateUrl: './register-sec.component.html',
   styleUrls: ['./register-sec.component.css']
 })
-export class RegisterSecComponent {
+export class RegisterSecComponent implements OnInit {
   // Données du formulaire
   nom = '';
   prenom = '';
   sexe = '';
   email = '';
   telephone = '';
-  specialite = '';
+  specialite_id: number | null = null;   // ← maintenant c'est un ID
   adresseHopital = '';
   poste = '';
   departement = '';
@@ -35,30 +35,10 @@ export class RegisterSecComponent {
   successMessage = '';
   isLoading = false;
 
-  // Listes de choix
-  specialites = [
-    'Médecine générale',
-    'Cardiologie',
-    'Dermatologie',
-    'Endocrinologie',
-    'Gastro-entérologie',
-    'Gériatrie',
-    'Gynécologie',
-    'Néphrologie',
-    'Neurologie',
-    'Ophtalmologie',
-    'ORL',
-    'Pédiatrie',
-    'Pneumologie',
-    'Psychiatrie',
-    'Radiologie',
-    'Rhumatologie',
-    'Urologie',
-    'Chirurgie générale',
-    'Anesthésie',
-    'Autre'
-  ];
+  // Liste des spécialités chargée depuis le backend
+  specialites: any[] = [];
 
+  // Listes statiques pour poste et département (inchangées)
   postes = [
     'Secrétaire médical(e)',
     'Secrétaire administratif(ve)',
@@ -82,6 +62,7 @@ export class RegisterSecComponent {
     'Autre'
   ];
 
+  // Gestion des étapes
   currentStep = 1;
   totalSteps = 4;
 
@@ -90,14 +71,32 @@ export class RegisterSecComponent {
     private router: Router
   ) {}
 
-  nextStep() { 
-    if (this.currentStep < this.totalSteps) this.currentStep++; 
-  }
-  
-  prevStep() { 
-    if (this.currentStep > 1) this.currentStep--; 
+  ngOnInit() {
+    this.loadSpecialites();   // ← charger les spécialités au démarrage
   }
 
+  // Charger les spécialités depuis le service
+  loadSpecialites() {
+    this.userService.getSpecialites().subscribe({
+      next: (data) => {
+        this.specialites = data;
+      },
+      error: () => {
+        this.errorMessage = 'Erreur lors du chargement des spécialités';
+      }
+    });
+  }
+
+  // Navigation entre les étapes
+  nextStep() {
+    if (this.currentStep < this.totalSteps) this.currentStep++;
+  }
+
+  prevStep() {
+    if (this.currentStep > 1) this.currentStep--;
+  }
+
+  // Gestion de la sélection de la photo
   onPhotoSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
@@ -110,6 +109,7 @@ export class RegisterSecComponent {
     }
   }
 
+  // Inscription de la secrétaire
   async registerSec() {
     this.errorMessage = '';
     this.successMessage = '';
@@ -117,7 +117,7 @@ export class RegisterSecComponent {
 
     // Validation des champs obligatoires
     if (!this.nom || !this.prenom || !this.sexe || !this.email ||
-        !this.telephone || !this.specialite || !this.adresseHopital ||
+        !this.telephone || !this.specialite_id || !this.adresseHopital ||
         !this.poste || !this.departement || !this.motDePasse) {
       this.errorMessage = 'Veuillez remplir tous les champs obligatoires';
       this.isLoading = false;
@@ -154,14 +154,14 @@ export class RegisterSecComponent {
     }
 
     try {
+      // Construction de l'objet utilisateur
       const user: User = {
         nom: this.nom,
         prenom: this.prenom,
         sexe: this.sexe,
         email: this.email,
         telephone: this.telephone,
-        specialite: this.specialite,
-        // SUPPRIMEZ cette ligne : rpps: this.rpps || undefined,
+        specialite_id: this.specialite_id,   // ← on envoie l'ID
         adresseHopital: this.adresseHopital,
         poste: this.poste,
         departement: this.departement,
@@ -170,11 +170,11 @@ export class RegisterSecComponent {
         statut: 'en_attente',
         dateInscription: new Date().toISOString()
       };
-      
+
       await this.userService.createSecretaire(user, this.photoFile);
 
       this.successMessage = 'Demande d\'inscription envoyée ! Votre compte sera activé après validation par l\'administrateur.';
-      
+
       setTimeout(() => {
         this.router.navigate(['/login']);
       }, 4000);
@@ -188,6 +188,7 @@ export class RegisterSecComponent {
     }
   }
 
+  // Redirections vers les autres types d'inscription
   goToRegisterPatient() {
     this.router.navigate(['/register']);
   }

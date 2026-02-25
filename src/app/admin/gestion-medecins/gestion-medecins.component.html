@@ -37,6 +37,28 @@
            ══════════════════════════════════════════════════════ -->
       <div *ngIf="activeTab === 'en_attente'" class="validation-section">
 
+        <!-- Barre d'outils spécifique pour l'onglet en attente -->
+        <div class="toolbar">
+          <div class="search-box" style="flex: 1;">
+            <i class="fas fa-search"></i>
+            <input type="text" [(ngModel)]="searchTerm"
+                   (input)="searchMedecins()"
+                   placeholder="Rechercher un médecin en attente...">
+          </div>
+          
+          <button class="btn-export" (click)="exportEnAttenteToCSV()" [disabled]="exportingEnAttente">
+            <i class="fas fa-download"></i> Exporter en attente
+            <span *ngIf="exportingEnAttente" class="spinner-small"></span>
+          </button>
+
+          <button class="btn-import" (click)="triggerFileInputEnAttente()" [disabled]="importingEnAttente">
+            <i class="fas fa-upload"></i> Importer en attente
+            <span *ngIf="importingEnAttente" class="spinner-small"></span>
+          </button>
+
+          <input #fileInputEnAttente type="file" accept=".csv, .xlsx, .xls" style="display: none" (change)="onFileSelectedEnAttente($event)">
+        </div>
+
         <div *ngIf="loadingEnAttente" class="loading-container">
           <i class="fas fa-spinner fa-spin"></i>
           <p>Chargement des demandes...</p>
@@ -58,7 +80,6 @@
           <div *ngFor="let medecin of medecinsEnAttente" class="user-card">
 
             <div class="user-photo" (click)="showProfilDetail(medecin)">
-              <!-- ✅ getPhotoSrc() règle le 431 et le 404 -->
               <img [src]="getPhotoSrc(medecin.photoBase64)" alt="Photo du médecin">
               <div class="photo-overlay"><i class="fas fa-eye"></i></div>
             </div>
@@ -70,6 +91,7 @@
               <p><i class="fas fa-envelope"></i> {{ medecin.email }}</p>
               <p><i class="fas fa-phone"></i> {{ medecin.telephone }}</p>
               <p><i class="fas fa-hospital"></i> {{ medecin.adresseHopital || '—' }}</p>
+              <p><i class="fas fa-venus-mars"></i> Sexe : {{ medecin.sexe || '—' }}</p>
               <p class="date">
                 <i class="fas fa-calendar"></i>
                 Inscrit le {{ formatDate(medecin.dateInscription!) }}
@@ -97,6 +119,7 @@
            ══════════════════════════════════════════════════════ -->
       <div *ngIf="activeTab === 'approuves'">
 
+        <!-- Barre d'outils spécifique pour l'onglet approuvés -->
         <div class="toolbar">
           <div class="search-box">
             <i class="fas fa-search"></i>
@@ -104,24 +127,40 @@
                    (input)="searchMedecins()"
                    placeholder="Rechercher un médecin...">
           </div>
-          <select class="filter-select" [(ngModel)]="filterSpecialite"
-                  (change)="filterBySpecialite()">
+          
+          <select class="filter-select" [(ngModel)]="filterSpecialite" (change)="filterBySpecialite()">
             <option value="">Toutes les spécialités</option>
             <option *ngFor="let spec of specialites" [value]="spec">{{ spec }}</option>
           </select>
-          <button class="btn-export">
-            <i class="fas fa-download"></i> Exporter
+
+          <button class="btn-export" (click)="exportApprouvesToCSV()" [disabled]="exportingApprouves">
+            <i class="fas fa-download"></i> Exporter approuvés
+            <span *ngIf="exportingApprouves" class="spinner-small"></span>
           </button>
+
+          <button class="btn-import" (click)="triggerFileInputApprouves()" [disabled]="importingApprouves">
+            <i class="fas fa-upload"></i> Importer approuvés
+            <span *ngIf="importingApprouves" class="spinner-small"></span>
+          </button>
+
+          <input #fileInputApprouves type="file" accept=".csv, .xlsx, .xls" style="display: none" (change)="onFileSelectedApprouves($event)">
         </div>
 
         <div class="specialites-grid">
-          <div *ngFor="let spec of specialites.slice(0, 6)" class="specialite-card">
+          <div *ngFor="let spec of (showAllSpecialites ? specialites : specialites.slice(0, 5))" class="specialite-card">
             <i class="fas fa-stethoscope"></i>
             <div>
               <p class="spec-name">{{ spec }}</p>
-              <p class="spec-count">{{ getSpecialiteCount(spec) }} médecins</p>
+              <p class="spec-count">{{ getSpecialiteCount(spec) }} médecin{{ getSpecialiteCount(spec) > 1 ? 's' : '' }}</p>
             </div>
           </div>
+        </div>
+
+        <div class="specialites-actions" *ngIf="specialites.length > 5">
+          <button class="btn-link" (click)="toggleSpecialites()">
+            <i class="fas fa-chevron-{{ showAllSpecialites ? 'up' : 'down' }}"></i>
+            {{ showAllSpecialites ? 'Voir moins' : 'Voir plus (' + (specialites.length - 5) + ' autres)' }}
+          </button>
         </div>
 
         <div *ngIf="loading" class="loading-container">
@@ -133,7 +172,6 @@
           <div *ngFor="let medecin of filteredMedecins" class="medecin-card">
 
             <div class="card-header">
-              <!-- ✅ getPhotoSrc() règle le 431 et le 404 -->
               <img [src]="getPhotoSrc(medecin.photoBase64)"
                    alt="Photo du médecin" class="medecin-photo">
               <span class="status-badge active">Actif</span>
@@ -145,22 +183,12 @@
                 <i class="fas fa-stethoscope"></i> {{ medecin.specialite || '—' }}
               </p>
               <div class="info-list">
-                <div class="info-row">
-                  <i class="fas fa-id-card"></i>
-                  <span>RPPS : {{ medecin.rpps || '—' }}</span>
-                </div>
-                <div class="info-row">
-                  <i class="fas fa-envelope"></i>
-                  <span>{{ medecin.email }}</span>
-                </div>
-                <div class="info-row">
-                  <i class="fas fa-phone"></i>
-                  <span>{{ medecin.telephone }}</span>
-                </div>
-                <div class="info-row">
-                  <i class="fas fa-hospital"></i>
-                  <span>{{ medecin.adresseHopital || '—' }}</span>
-                </div>
+                <div class="info-row"><i class="fas fa-id-card"></i> RPPS : {{ medecin.rpps || '—' }}</div>
+                <div class="info-row"><i class="fas fa-envelope"></i> {{ medecin.email }}</div>
+                <div class="info-row"><i class="fas fa-phone"></i> {{ medecin.telephone }}</div>
+                <div class="info-row"><i class="fas fa-hospital"></i> {{ medecin.adresseHopital || '—' }}</div>
+                <div class="info-row"><i class="fas fa-venus-mars"></i> Sexe : {{ medecin.sexe || '—' }}</div>
+                <div class="info-row"><i class="fas fa-calendar"></i> Inscrit le {{ formatDate(medecin.dateInscription) }}</div>
               </div>
             </div>
 
@@ -196,16 +224,12 @@
 
     <div class="modal-header">
       <h2><i class="fas fa-user-md"></i> Profil du Médecin</h2>
-      <button class="btn-close" (click)="closeMedecinDetail()">
-        <i class="fas fa-times"></i>
-      </button>
+      <button class="btn-close" (click)="closeMedecinDetail()"><i class="fas fa-times"></i></button>
     </div>
 
     <div class="modal-body">
       <div class="profile-section">
-        <!-- ✅ getPhotoSrc() ici aussi -->
-        <img [src]="getPhotoSrc(selectedMedecin.photoBase64)"
-             alt="Photo" class="profile-photo">
+        <img [src]="getPhotoSrc(selectedMedecin.photoBase64)" alt="Photo" class="profile-photo">
         <h3>Dr. {{ selectedMedecin.prenom }} {{ selectedMedecin.nom }}</h3>
         <p class="profile-specialite">{{ selectedMedecin.specialite }}</p>
         <span class="badge badge-success">Médecin Approuvé</span>
@@ -214,42 +238,23 @@
       <div class="details-grid">
         <div class="detail-group">
           <h4><i class="fas fa-info-circle"></i> Informations Professionnelles</h4>
-          <div class="detail-item">
-            <label>Numéro RPPS</label>
-            <p>{{ selectedMedecin.rpps || '—' }}</p>
-          </div>
-          <div class="detail-item">
-            <label>Spécialité</label>
-            <p>{{ selectedMedecin.specialite || '—' }}</p>
-          </div>
-          <div class="detail-item">
-            <label>Adresse Hôpital</label>
-            <p>{{ selectedMedecin.adresseHopital || '—' }}</p>
-          </div>
+          <div class="detail-item"><label>Numéro RPPS</label><p>{{ selectedMedecin.rpps || '—' }}</p></div>
+          <div class="detail-item"><label>Spécialité</label><p>{{ selectedMedecin.specialite || '—' }}</p></div>
+          <div class="detail-item"><label>Adresse Hôpital</label><p>{{ selectedMedecin.adresseHopital || '—' }}</p></div>
+          <div class="detail-item"><label>Sexe</label><p>{{ selectedMedecin.sexe || '—' }}</p></div>
         </div>
         <div class="detail-group">
           <h4><i class="fas fa-address-book"></i> Coordonnées</h4>
-          <div class="detail-item">
-            <label>Email</label>
-            <p>{{ selectedMedecin.email }}</p>
-          </div>
-          <div class="detail-item">
-            <label>Téléphone</label>
-            <p>{{ selectedMedecin.telephone }}</p>
-          </div>
-          <div class="detail-item">
-            <label>Date d'inscription</label>
-            <p>{{ formatDate(selectedMedecin.dateInscription) }}</p>
-          </div>
+          <div class="detail-item"><label>Email</label><p>{{ selectedMedecin.email }}</p></div>
+          <div class="detail-item"><label>Téléphone</label><p>{{ selectedMedecin.telephone }}</p></div>
+          <div class="detail-item"><label>Date d'inscription</label><p>{{ formatDate(selectedMedecin.dateInscription) }}</p></div>
         </div>
       </div>
     </div>
 
     <div class="modal-footer">
       <button class="btn-secondary" (click)="closeMedecinDetail()">Fermer</button>
-      <button class="btn-primary">
-        <i class="fas fa-edit"></i> Modifier
-      </button>
+      <button class="btn-primary"><i class="fas fa-edit"></i> Modifier</button>
     </div>
   </div>
 </div>
